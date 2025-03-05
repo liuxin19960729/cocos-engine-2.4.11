@@ -135,12 +135,13 @@ export default class Program {
     for (let i = 0; i < numUniforms; ++i) {
       let info = gl.getActiveUniform(program, i);
       let name = info.name;
+      /**uniform 在程序中的位置*/
       let location = gl.getUniformLocation(program, name);
       let isArray = name.substr(name.length - 3) === '[0]';
       if (isArray) {
         name = name.substr(0, name.length - 3);
       }
-
+      
       let uniform = {
         name: name,
         location: location,

@@ -492,11 +492,20 @@ function _commitVertexBuffers(device, gl, cur, next) {
         }
 
         if (device._enabledAttributes[attr.location] === 0) {
+          /**告诉webgl 怎么从缓冲去取出属性值 */
           gl.enableVertexAttribArray(attr.location);
           device._enabledAttributes[attr.location] = 1;
         }
         device._newAttributes[attr.location] = 1;
 
+        /**
+         *attr.location  属性在程序中的位置
+         *normalize 是否需要归一化
+         *type  数据类型(例如 gl.FLOAT 每个数据类型是32位浮点型)
+         *num 每次运行在缓冲区提取的数据
+         *stride   0 = 移动单位数量 * 每个单位占用内存（sizeof(type)）
+         *offset 缓冲去在缓冲区的offset 位置
+         */
         gl.vertexAttribPointer(
           attr.location,
           el.num,
@@ -597,7 +606,7 @@ export default class Device {
       opts.preserveDrawingBuffer = false;
     }
 
-    
+
     try {
       /**创建一个webgl 上下文 */
       gl = canvasEL.getContext('webgl', opts)
@@ -712,7 +721,7 @@ export default class Device {
     gl.disable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ZERO);
     gl.blendEquation(gl.FUNC_ADD);
-    gl.blendColor(1,1,1,1);
+    gl.blendColor(1, 1, 1, 1);
 
     gl.colorMask(true, true, true, true);
 
@@ -723,7 +732,7 @@ export default class Device {
     gl.depthFunc(gl.LESS);
     gl.depthMask(false);
     gl.disable(gl.POLYGON_OFFSET_FILL);
-    gl.depthRange(0,1);
+    gl.depthRange(0, 1);
 
     gl.disable(gl.STENCIL_TEST);
     gl.stencilFunc(gl.ALWAYS, 0, 0xFF);
@@ -754,7 +763,7 @@ export default class Device {
     }
   }
 
-  _restoreIndexBuffer () {
+  _restoreIndexBuffer() {
     const gl = this._gl;
 
     let ib = this._current.indexBuffer;
@@ -845,6 +854,10 @@ export default class Device {
       this._vw !== w ||
       this._vh !== h
     ) {
+      /**设置屏幕空间 
+       * -1 -->1 对应者 x-->x+w
+       * -1 -->1 对应者 y-->y+h
+      */
       this._gl.viewport(x, y, w, h);
       this._vx = x;
       this._vy = y;
@@ -884,13 +897,14 @@ export default class Device {
    */
   clear(opts) {
     if (opts.color === undefined && opts.depth === undefined && opts.stencil === undefined) {
-        return;
+      return;
     }
     const gl = this._gl;
     let flags = 0;
 
     if (opts.color !== undefined) {
       flags |= gl.COLOR_BUFFER_BIT;
+      /**清除画布 */
       gl.clearColor(opts.color[0], opts.color[1], opts.color[2], opts.color[3]);
     }
 
@@ -1283,14 +1297,14 @@ export default class Device {
   /**
    * @method resetDrawCalls
    */
-  resetDrawCalls () {
+  resetDrawCalls() {
     this._stats.drawcalls = 0;
   }
-  
+
   /**
    * @method getDrawCalls
    */
-  getDrawCalls () {
+  getDrawCalls() {
     return this._stats.drawcalls;
   }
 
@@ -1328,6 +1342,7 @@ export default class Device {
     let programDirty = false;
     if (cur.program !== next.program) {
       if (next.program._linked) {
+        /*告诉gl 运行之前写好的程序 */
         gl.useProgram(next.program._glID);
       } else {
         console.warn('Failed to use program: has not linked yet.');
@@ -1374,6 +1389,13 @@ export default class Device {
           base * next.indexBuffer._bytesPerIndex
         );
       } else {
+        /**count 绘制次数 */
+        /**
+         * primitiveType:
+         *   gl.TRIANGLES 三角形
+         *    ....
+         * base 从那个点开始绘制
+         */
         gl.drawArrays(
           this._next.primitiveType,
           base,

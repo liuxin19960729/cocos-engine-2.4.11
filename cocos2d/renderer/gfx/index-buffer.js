@@ -24,7 +24,7 @@ class IndexBuffer {
 
     this._needExpandDataStore = true;
 
-    // update
+    // update  _glID GPU buffer 对应的Id
     this._glID = device._gl.createBuffer();
     this.update(0, data);
 
@@ -79,8 +79,10 @@ class IndexBuffer {
     let gl = this._device._gl;
     let glUsage = this._usage;
 
+    /**this._glID GPU buffer 绑定 */
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._glID);
     if (this._needExpandDataStore) {
+      /**讲内存里面的数据拷贝到CPU中*/
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, glUsage);
       this._needExpandDataStore = false;
     }

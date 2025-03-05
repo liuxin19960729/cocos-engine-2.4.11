@@ -18,7 +18,7 @@ class VertexBuffer {
 
     this._needExpandDataStore = true;
 
-    // update
+    // update gl 创建缓冲区
     this._glID = device._gl.createBuffer();
     this.update(0, data);
 
@@ -74,6 +74,7 @@ class VertexBuffer {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._glID);
     if (this._needExpandDataStore) {
+      /* 讲data 数据复制到GPU 上 */
       gl.bufferData(gl.ARRAY_BUFFER, data, glUsage);
       this._needExpandDataStore = false;
     }
