@@ -174,9 +174,21 @@ vec4(1)
 和
 vec4(1,1,1, 1) 是一样的
 
-
 note: GLSL 是强类型语言
 float a=1.0;
 float b=float(2);// 讲integer 转换为 float
+
+note:
+   vec4(v.rgb,1) 1 不会报错,vec4 内部会进行类型转换
+
+
+GLSL 内部方法
+
+T sin (T angle);
+sin 支持 float 和 vec2,vec3,vec4
+
+vec4 v =sin(vec4angle);
+和 vec4 v = vec4(sin(vec4angle.x), sin(vec4angle.y), sin(vec4angle.z), sin(vec4angle.w));
+是一样的
 
 ```
