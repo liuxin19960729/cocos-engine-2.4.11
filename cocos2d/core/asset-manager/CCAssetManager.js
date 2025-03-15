@@ -57,7 +57,7 @@ const { assets, files, parsed, pipeline, transformPipeline, fetchPipeline, Reque
  * 
  * @class AssetManager
  */
-function AssetManager () {
+function AssetManager() {
 
     this._preprocessPipe = preprocess;
 
@@ -71,12 +71,13 @@ function AssetManager () {
      * 
      * !#zh
      * 正常加载管线
-     * 
+     * preprocess 预处理流程
+     * load 加载流程
      * @property pipeline
      * @type {Pipeline}
      */
     this.pipeline = pipeline.append(preprocess).append(load);
-    
+
     /**
      * !#en 
      * Fetching pipeline
@@ -129,9 +130,9 @@ function AssetManager () {
      * assets: AssetManager.Cache<cc.Asset>
      */
     this.assets = assets;
-    
+
     this._files = files;
-    
+
     this._parsed = parsed;
 
     this.generalImportBase = '';
@@ -198,7 +199,7 @@ function AssetManager () {
      * @property downloader
      * @type {Downloader}
      */
-    this.downloader = downloader; 
+    this.downloader = downloader;
 
     /**
      * !#en 
@@ -270,19 +271,19 @@ function AssetManager () {
         },
 
         'preload': {
-            maxConcurrency: 2, 
+            maxConcurrency: 2,
             maxRequestsPerFrame: 2,
             priority: -1,
         },
 
         'scene': {
-            maxConcurrency: 8, 
+            maxConcurrency: 8,
             maxRequestsPerFrame: 8,
             priority: 1,
         },
 
         'bundle': {
-            maxConcurrency: 8, 
+            maxConcurrency: 8,
             maxRequestsPerFrame: 8,
             priority: 2,
         },
@@ -322,7 +323,7 @@ AssetManager.prototype = {
      * @readonly
      * @type {Bundle}
      */
-    get main () {
+    get main() {
         return bundles.get(BuiltinBundleName.MAIN);
     },
 
@@ -337,7 +338,7 @@ AssetManager.prototype = {
      * @readonly
      * @type {Bundle}
      */
-    get resources () {
+    get resources() {
         return bundles.get(BuiltinBundleName.RESOURCES);
     },
 
@@ -352,7 +353,7 @@ AssetManager.prototype = {
      * @readonly
      * @type {Bundle}
      */
-    get internal () {
+    get internal() {
         return bundles.get(BuiltinBundleName.INTERNAL);
     },
 
@@ -369,7 +370,7 @@ AssetManager.prototype = {
      * @typescript
      * init(options: Record<string, any>): void
      */
-    init (options) {
+    init(options) {
         options = options || Object.create(null);
         this._files.clear();
         this._parsed.clear();
@@ -404,7 +405,7 @@ AssetManager.prototype = {
      * @typescript
      * getBundle (name: string): cc.AssetManager.Bundle
      */
-    getBundle (name) {
+    getBundle(name) {
         return bundles.get(name);
     },
 
@@ -421,7 +422,7 @@ AssetManager.prototype = {
      * @typescript
      * removeBundle(bundle: cc.AssetManager.Bundle): void
      */
-    removeBundle (bundle) {
+    removeBundle(bundle) {
         bundle._destroy();
         bundles.remove(bundle.name);
     },
@@ -483,12 +484,13 @@ AssetManager.prototype = {
      * loadAny(requests: string | string[] | Record<string, any> | Record<string, any>[], options: Record<string, any>): void
      * loadAny(requests: string | string[] | Record<string, any> | Record<string, any>[]): void
      */
-    loadAny (requests, options, onProgress, onComplete) {
+    loadAny(requests, options, onProgress, onComplete) {
         var { options, onProgress, onComplete } = parseParameters(options, onProgress, onComplete);
-        
+
         options.preset = options.preset || 'default';
         requests = Array.isArray(requests) ? requests.concat() : requests;
-        let task = new Task({input: requests, onProgress, onComplete: asyncify(onComplete), options});
+        /**请求任务 */
+        let task = new Task({ input: requests, onProgress, onComplete: asyncify(onComplete), options });
         pipeline.async(task);
     },
 
@@ -524,12 +526,12 @@ AssetManager.prototype = {
      * preloadAny(requests: string | string[] | Record<string, any> | Record<string, any>[], options: Record<string, any>): void
      * preloadAny(requests: string | string[] | Record<string, any> | Record<string, any>[]): void
      */
-    preloadAny (requests, options, onProgress, onComplete) {
+    preloadAny(requests, options, onProgress, onComplete) {
         var { options, onProgress, onComplete } = parseParameters(options, onProgress, onComplete);
-    
+
         options.preset = options.preset || 'preload';
         requests = Array.isArray(requests) ? requests.concat() : requests;
-        var task = new Task({input: requests, onProgress, onComplete: asyncify(onComplete), options});
+        var task = new Task({ input: requests, onProgress, onComplete: asyncify(onComplete), options });
         fetchPipeline.async(task);
     },
 
@@ -555,7 +557,7 @@ AssetManager.prototype = {
      * postLoadNative(asset: cc.Asset, options: Record<string, any>): void
      * postLoadNative(asset: cc.Asset): void
      */
-    postLoadNative (asset, options, onComplete) {
+    postLoadNative(asset, options, onComplete) {
         if (!(asset instanceof cc.Asset)) throw new Error('input is not asset');
         var { options, onComplete } = parseParameters(options, undefined, onComplete);
 
@@ -573,7 +575,7 @@ AssetManager.prototype = {
                     depend.bundle = bundle.name;
                 }
             }
-            
+
             this.loadAny(depend, options, function (err, native) {
                 if (!err) {
                     if (asset.isValid && !asset._nativeAsset) {
@@ -615,7 +617,7 @@ AssetManager.prototype = {
      * loadRemote<T extends cc.Asset>(url: string, options: Record<string, any>): void
      * loadRemote<T extends cc.Asset>(url: string): void
      */
-    loadRemote (url, options, onComplete) {
+    loadRemote(url, options, onComplete) {
         var { options, onComplete } = parseParameters(options, undefined, onComplete);
 
         if (this.assets.has(url)) {
@@ -624,7 +626,7 @@ AssetManager.prototype = {
 
         options.__isNative__ = true;
         options.preset = options.preset || 'remote';
-        this.loadAny({url}, options, null, function (err, data) {
+        this.loadAny({ url }, options, null, function (err, data) {
             if (err) {
                 cc.error(err.message, err.stack);
                 onComplete && onComplete(err, null);
@@ -660,7 +662,7 @@ AssetManager.prototype = {
      * loadScript(url: string|string[], options: Record<string, any>): void
      * loadScript(url: string|string[]): void
      */
-    loadScript (url, options, onComplete) {
+    loadScript(url, options, onComplete) {
         var { options, onComplete } = parseParameters(options, undefined, onComplete);
         options.__requestType__ = RequestType.URL;
         options.preset = options.preset || 'script';
@@ -691,15 +693,16 @@ AssetManager.prototype = {
      * loadBundle(nameOrUrl: string, options: Record<string, any>): void
      * loadBundle(nameOrUrl: string): void
      */
-    loadBundle (nameOrUrl, options, onComplete) {
+    loadBundle(nameOrUrl, options, onComplete) {
         var { options, onComplete } = parseParameters(options, undefined, onComplete);
 
         let bundleName = cc.path.basename(nameOrUrl);
 
+        /**检查是否已经加载了缓存 */
         if (this.bundles.has(bundleName)) {
             return asyncify(onComplete)(null, this.getBundle(bundleName));
         }
-
+        // bundle 类型
         options.preset = options.preset || 'bundle';
         options.ext = 'bundle';
         this.loadRemote(nameOrUrl, options, onComplete);
@@ -727,7 +730,7 @@ AssetManager.prototype = {
      * @typescript
      * releaseAsset(asset: cc.Asset): void
      */
-    releaseAsset (asset) {
+    releaseAsset(asset) {
         releaseManager.tryRelease(asset, true);
     },
 
@@ -744,7 +747,7 @@ AssetManager.prototype = {
      * @typescript
      * releaseUnusedAssets(): void
      */
-    releaseUnusedAssets () {
+    releaseUnusedAssets() {
         assets.forEach(function (asset) {
             releaseManager.tryRelease(asset);
         });
@@ -762,7 +765,7 @@ AssetManager.prototype = {
      * @typescript
      * releaseAll(): void
      */
-    releaseAll () {
+    releaseAll() {
         assets.forEach(function (asset) {
             releaseManager.tryRelease(asset, true);
         });
@@ -771,8 +774,8 @@ AssetManager.prototype = {
         }
     },
 
-    _transform (input, options) {
-        var subTask = Task.create({input, options});
+    _transform(input, options) {
+        var subTask = Task.create({ input, options });
         var urls = [];
         try {
             var result = transformPipeline.sync(subTask);
@@ -816,7 +819,7 @@ Object.defineProperty(cc, 'resources', {
      * @readonly
      * @type {AssetManager.Bundle}
      */
-    get () {
+    get() {
         return bundles.get(BuiltinBundleName.RESOURCES);
     }
 });

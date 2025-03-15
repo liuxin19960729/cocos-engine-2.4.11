@@ -44,6 +44,7 @@ function preprocess (task, done) {
             case '__nativeName__':
             case 'audioLoadMode':
             case 'bundle':
+                /**bundle 会将option的值全部赋值到subOptions */
                 subOptions[op] = options[op];
                 break;
             // other settings, left to next pipe

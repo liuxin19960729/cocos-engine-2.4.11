@@ -105,6 +105,7 @@ var downloadBundle = function (nameOrUrl, options, onComplete) {
     if (!REGEX.test(url)) url = 'assets/' + bundleName;
     var version = options.version || downloader.bundleVers[bundleName];
     var count = 0;
+    /**config 路径  url/config.${version}.json */
     var config = `${url}/config.${version ? version + '.' : ''}json`;
     let out = null, error = null;
     downloadJson(config, options, function (err, response) {
@@ -118,7 +119,7 @@ var downloadBundle = function (nameOrUrl, options, onComplete) {
             onComplete(error, out);
         }
     });
-
+    /**js 路径 url/index.${version}.js */
     var js = `${url}/index.${version ? version + '.' : ''}js`;
     downloadScript(js, options, function (err) {
         if (err) {
@@ -207,7 +208,7 @@ var downloader = {
 
     _remoteServerAddress: '',
     _maxInterval: 1 / 30,
-    
+
     /**
      * !#en 
      * The address of remote server
@@ -219,7 +220,7 @@ var downloader = {
      * @type {string}
      * @default ''
      */
-    get remoteServerAddress () {
+    get remoteServerAddress() {
         return this._remoteServerAddress;
     },
 
@@ -326,7 +327,7 @@ var downloader = {
      * downloadDomAudio(url: string, onComplete?: (err: Error, audio: HTMLAudioElement) => void): HTMLAudioElement
      */
     downloadDomAudio: downloadDomAudio,
-    
+
     /*
      * !#en
      * Use XMLHttpRequest to download file
@@ -384,7 +385,7 @@ var downloader = {
      */
     downloadScript: downloadScript,
 
-    init (bundleVers, remoteServerAddress) {
+    init(bundleVers, remoteServerAddress) {
         _downloading.clear();
         _queue.length = 0;
         this._remoteServerAddress = remoteServerAddress || '';
@@ -413,7 +414,7 @@ var downloader = {
      * register(type: string, handler: (url: string, options: Record<string, any>, onComplete: (err: Error, content: any) => void) => void): void
      * register(map: Record<string, (url: string, options: Record<string, any>, onComplete: (err: Error, content: any) => void) => void>): void
      */
-    register (type, handler) {
+    register(type, handler) {
         if (typeof type === 'object') {
             js.mixin(downloaders, type);
         }
@@ -448,7 +449,7 @@ var downloader = {
      * @typescript
      * download(id: string, url: string, type: string, options: Record<string, any>, onComplete: (err: Error, content: any) => void): void
      */
-    download (id, url, type, options, onComplete) {
+    download(id, url, type, options, onComplete) {
         let func = downloaders[type] || downloaders['default'];
         let self = this;
         // if it is downloaded, don't download again
@@ -465,10 +466,10 @@ var downloader = {
                     if (item.priority < priority) {
                         item.priority = priority;
                         _queueDirty = true;
-                    } 
+                    }
                     return;
                 }
-            } 
+            }
         }
         else {
             // if download fail, should retry
@@ -476,17 +477,17 @@ var downloader = {
             var maxConcurrency = typeof options.maxConcurrency !== 'undefined' ? options.maxConcurrency : this.maxConcurrency;
             var maxRequestsPerFrame = typeof options.maxRequestsPerFrame !== 'undefined' ? options.maxRequestsPerFrame : this.maxRequestsPerFrame;
 
-            function process (index, callback) {
+            function process(index, callback) {
                 if (index === 0) {
                     _downloading.add(id, [onComplete]);
                 }
-                
+
                 if (!self.limited) return func(urlAppendTimestamp(url), options, callback);
 
                 // refresh
                 updateTime();
 
-                function invoke () {
+                function invoke() {
                     func(urlAppendTimestamp(url), options, function () {
                         // when finish downloading, update _totalNum
                         _totalNum--;
@@ -507,7 +508,7 @@ var downloader = {
                     // when number of request up to limitation, cache the rest
                     _queue.push({ id, priority: options.priority || 0, invoke });
                     _queueDirty = true;
-    
+
                     if (!_checkNextPeriod && _totalNum < maxConcurrency) {
                         callInNextTick(handleQueue, maxConcurrency, maxRequestsPerFrame);
                         _checkNextPeriod = true;
@@ -516,14 +517,14 @@ var downloader = {
             }
 
             // when retry finished, invoke callbacks
-            function finale (err, result) {
+            function finale(err, result) {
                 if (!err) files.add(id, result);
                 var callbacks = _downloading.remove(id);
                 for (let i = 0, l = callbacks.length; i < l; i++) {
                     callbacks[i](err, result);
                 }
             }
-    
+
             retry(process, maxRetryCount, this.retryInterval, finale);
         }
     }
@@ -532,48 +533,48 @@ var downloader = {
 // dafault handler map
 var downloaders = {
     // Images
-    '.png' : downloadImage,
-    '.jpg' : downloadImage,
-    '.bmp' : downloadImage,
-    '.jpeg' : downloadImage,
-    '.gif' : downloadImage,
-    '.ico' : downloadImage,
-    '.tiff' : downloadImage,
-    '.webp' : downloadImage,
-    '.image' : downloadImage,
+    '.png': downloadImage,
+    '.jpg': downloadImage,
+    '.bmp': downloadImage,
+    '.jpeg': downloadImage,
+    '.gif': downloadImage,
+    '.ico': downloadImage,
+    '.tiff': downloadImage,
+    '.webp': downloadImage,
+    '.image': downloadImage,
     '.pvr': downloadArrayBuffer,
     '.pkm': downloadArrayBuffer,
     '.astc': downloadArrayBuffer,
 
     // Audio
-    '.mp3' : downloadAudio,
-    '.ogg' : downloadAudio,
-    '.wav' : downloadAudio,
-    '.m4a' : downloadAudio,
+    '.mp3': downloadAudio,
+    '.ogg': downloadAudio,
+    '.wav': downloadAudio,
+    '.m4a': downloadAudio,
 
     // Txt
-    '.txt' : downloadText,
-    '.xml' : downloadText,
-    '.vsh' : downloadText,
-    '.fsh' : downloadText,
-    '.atlas' : downloadText,
+    '.txt': downloadText,
+    '.xml': downloadText,
+    '.vsh': downloadText,
+    '.fsh': downloadText,
+    '.atlas': downloadText,
 
-    '.tmx' : downloadText,
-    '.tsx' : downloadText,
+    '.tmx': downloadText,
+    '.tsx': downloadText,
 
-    '.json' : downloadJson,
-    '.ExportJson' : downloadJson,
-    '.plist' : downloadText,
+    '.json': downloadJson,
+    '.ExportJson': downloadJson,
+    '.plist': downloadText,
 
-    '.fnt' : downloadText,
+    '.fnt': downloadText,
 
     // font
-    '.font' : loadFont,
-    '.eot' : loadFont,
-    '.ttf' : loadFont,
-    '.woff' : loadFont,
-    '.svg' : loadFont,
-    '.ttc' : loadFont,
+    '.font': loadFont,
+    '.eot': loadFont,
+    '.ttf': loadFont,
+    '.woff': loadFont,
+    '.svg': loadFont,
+    '.ttc': loadFont,
 
     // Video
     '.mp4': downloadVideo,
@@ -585,7 +586,7 @@ var downloaders = {
     '.rmvb': downloadVideo,
 
     // Binary
-    '.binary' : downloadArrayBuffer,
+    '.binary': downloadArrayBuffer,
     '.bin': downloadArrayBuffer,
     '.dbbin': downloadArrayBuffer,
     '.skel': downloadArrayBuffer,
