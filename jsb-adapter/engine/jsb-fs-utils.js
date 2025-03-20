@@ -32,7 +32,7 @@ var fsUtils = {
     fs,
 
     initJsbDownloader (jsbDownloaderMaxTasks, jsbDownloaderTimeout) {
-
+        /**初始化jsb下载器 */
         jsb_downloader = new jsb.Downloader({
             countOfMaxProcessingTasks: jsbDownloaderMaxTasks || 32,
             timeoutInSeconds: jsbDownloaderTimeout || 30,
@@ -91,6 +91,7 @@ var fsUtils = {
         downloading.add(remoteUrl, { onProgress, onComplete });
         var storagePath = filePath;
         if (!storagePath) storagePath = tempDir + '/' + performance.now() + cc.path.extname(remoteUrl);
+        /**远程地址 存储路径 */
         jsb_downloader.createDownloadFileTask(remoteUrl, storagePath, header);
     },
 
