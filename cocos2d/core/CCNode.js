@@ -46,7 +46,7 @@ const ERR_INVALID_NUMBER = CC_EDITOR && 'The %s is invalid';
 const ONE_DEGREE = Math.PI / 180;
 
 var ActionManagerExist = !!cc.ActionManager;
-var emptyFunc = function () {};
+var emptyFunc = function () { };
 
 // getWorldPosition temp var
 var _gwpVec3 = new Vec3();
@@ -461,12 +461,14 @@ var _currentHovered = null;
 
 var _touchStartHandler = function (touch, event) {
     var pos = touch.getLocation();
+    /**listener 下的 node */
     var node = this.owner;
-
+    /**是否点击到该节点 */
     if (node._hitTest(pos, this)) {
         event.type = EventType.TOUCH_START;
         event.touch = touch;
         event.bubbles = true;
+        /**发射事件 */
         node.dispatchEvent(event);
         return true;
     }
@@ -571,7 +573,7 @@ var _mouseWheelHandler = function (event) {
     }
 };
 
-function _searchComponentsInParent (node, comp) {
+function _searchComponentsInParent(node, comp) {
     if (comp) {
         let index = 0;
         let list = null;
@@ -596,7 +598,7 @@ function _searchComponentsInParent (node, comp) {
     return null;
 }
 
-function _checkListeners (node, events) {
+function _checkListeners(node, events) {
     if (!(node._objFlags & Destroying)) {
         if (node._bubblingListeners) {
             for (let i = 0, l = events.length; i < l; ++i) {
@@ -617,14 +619,14 @@ function _checkListeners (node, events) {
     return true;
 }
 
-function _doDispatchEvent (owner, event, cachedArray) {
+function _doDispatchEvent(owner, event, cachedArray) {
     var target, i;
     event.target = owner;
 
     // Event.CAPTURING_PHASE
     cachedArray.length = 0;
     owner._getCapturingTargets(event.type, cachedArray);
-    // capturing
+    // capturing 捕获阶段
     event.eventPhase = 1;
     for (i = cachedArray.length - 1; i >= 0; --i) {
         target = cachedArray[i];
@@ -653,7 +655,7 @@ function _doDispatchEvent (owner, event, cachedArray) {
     }
 
     if (!event._propagationStopped && event.bubbles) {
-        // Event.BUBBLING_PHASE
+        // Event.BUBBLING_PHASE 冒泡阶段
         owner._getBubblingTargets(event.type, cachedArray);
         // propagate
         event.eventPhase = 3;
@@ -675,7 +677,7 @@ function _doDispatchEvent (owner, event, cachedArray) {
 }
 
 // traversal the node tree, child cullingMask must keep the same with the parent.
-function _getActualGroupIndex (node) {
+function _getActualGroupIndex(node) {
     let groupIndex = node.groupIndex;
     if (groupIndex === 0 && node.parent) {
         groupIndex = _getActualGroupIndex(node.parent);
@@ -683,7 +685,7 @@ function _getActualGroupIndex (node) {
     return groupIndex;
 }
 
-function _updateCullingMask (node) {
+function _updateCullingMask(node) {
     let index = _getActualGroupIndex(node);
     node._cullingMask = 1 << index;
     if (CC_JSB && CC_NATIVERENDERER) {
@@ -695,7 +697,7 @@ function _updateCullingMask (node) {
 }
 
 // 2D/3D matrix functions
-function updateLocalMatrix3D () {
+function updateLocalMatrix3D() {
     if (this._localMatDirty & LocalDirtyFlag.TRSS) {
         // Update transform
         let t = this._matrix;
@@ -722,7 +724,7 @@ function updateLocalMatrix3D () {
     }
 }
 
-function updateLocalMatrix2D () {
+function updateLocalMatrix2D() {
     let dirtyFlag = this._localMatDirty;
     if (!(dirtyFlag & LocalDirtyFlag.TRSS)) return;
 
@@ -783,7 +785,7 @@ function updateLocalMatrix2D () {
     this._worldMatDirty = true;
 }
 
-function calculWorldMatrix3D () {
+function calculWorldMatrix3D() {
     // Avoid as much function call as possible
     if (this._localMatDirty & LocalDirtyFlag.TRSS) {
         this._updateLocalMatrix();
@@ -799,7 +801,7 @@ function calculWorldMatrix3D () {
     this._worldMatDirty = false;
 }
 
-function calculWorldMatrix2D () {
+function calculWorldMatrix2D() {
     // Avoid as much function call as possible
     if (this._localMatDirty & LocalDirtyFlag.TRSS) {
         this._updateLocalMatrix();
@@ -816,10 +818,10 @@ function calculWorldMatrix2D () {
     this._worldMatDirty = false;
 }
 
-function mulMat2D (out, a, b) {
+function mulMat2D(out, a, b) {
     let am = a.m, bm = b.m, outm = out.m;
-    let aa=am[0], ab=am[1], ac=am[4], ad=am[5], atx=am[12], aty=am[13];
-    let ba=bm[0], bb=bm[1], bc=bm[4], bd=bm[5], btx=bm[12], bty=bm[13];
+    let aa = am[0], ab = am[1], ac = am[4], ad = am[5], atx = am[12], aty = am[13];
+    let ba = bm[0], bb = bm[1], bc = bm[4], bd = bm[5], btx = bm[12], bty = bm[13];
     if (ab !== 0 || ac !== 0) {
         outm[0] = ba * aa + bb * ac;
         outm[1] = ba * ab + bb * ad;
@@ -894,10 +896,10 @@ let NodeDefines = {
             formerlySerializedAs: 'groupIndex'
         },
         groupIndex: {
-            get () {
+            get() {
                 return this._groupIndex;
             },
-            set (value) {
+            set(value) {
                 this._groupIndex = value;
                 _updateCullingMask(this);
                 this.emit(EventType.GROUP_CHANGED, this);
@@ -915,11 +917,11 @@ let NodeDefines = {
          * @type {String}
          */
         group: {
-            get () {
+            get() {
                 return cc.game.groupList[this.groupIndex] || '';
             },
 
-            set (value) {
+            set(value) {
                 // update the groupIndex
                 this.groupIndex = cc.game.groupList.indexOf(value);
             }
@@ -945,10 +947,10 @@ let NodeDefines = {
          * cc.log("Node Position X: " + node.x);
          */
         x: {
-            get () {
+            get() {
                 return this._trs[0];
             },
-            set (value) {
+            set(value) {
                 let trs = this._trs;
                 if (value !== trs[0]) {
                     if (!CC_EDITOR || isFinite(value)) {
@@ -988,10 +990,10 @@ let NodeDefines = {
          * cc.log("Node Position Y: " + node.y);
          */
         y: {
-            get () {
+            get() {
                 return this._trs[1];
             },
-            set (value) {
+            set(value) {
                 let trs = this._trs;
                 if (value !== trs[1]) {
                     if (!CC_EDITOR || isFinite(value)) {
@@ -1028,10 +1030,10 @@ let NodeDefines = {
          * @type {Number}
          */
         z: {
-            get () {
+            get() {
                 return this._trs[2];
             },
-            set (value) {
+            set(value) {
                 let trs = this._trs;
                 if (value !== trs[2]) {
                     if (!CC_EDITOR || isFinite(value)) {
@@ -1070,13 +1072,13 @@ let NodeDefines = {
          * cc.log("Node Rotation: " + node.rotation);
          */
         rotation: {
-            get () {
+            get() {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotation` is deprecated since v2.1.0, please use `-angle` instead. (`this.node.rotation` -> `-this.node.angle`)");
                 }
                 return -this.angle;
             },
-            set (value) {
+            set(value) {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotation` is deprecated since v2.1.0, please set `-angle` instead. (`this.node.rotation = x` -> `this.node.angle = -x`)");
                 }
@@ -1093,10 +1095,10 @@ let NodeDefines = {
          * @type {Number}
          */
         angle: {
-            get () {
+            get() {
                 return this._eulerAngles.z;
             },
-            set (value) {
+            set(value) {
                 Vec3.set(this._eulerAngles, 0, 0, value);
                 Trs.fromAngleZ(this._trs, value);
                 this.setLocalDirty(LocalDirtyFlag.ALL_ROTATION);
@@ -1130,13 +1132,13 @@ let NodeDefines = {
          * cc.log("Node eulerAngles X: " + node.eulerAngles.x);
          */
         rotationX: {
-            get () {
+            get() {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotationX` is deprecated since v2.1.0, please use `eulerAngles.x` instead. (`this.node.rotationX` -> `this.node.eulerAngles.x`)");
                 }
                 return this._eulerAngles.x;
             },
-            set (value) {
+            set(value) {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotationX` is deprecated since v2.1.0, please set `eulerAngles` instead. (`this.node.rotationX = x` -> `this.node.is3DNode = true; this.node.eulerAngles = cc.v3(x, 0, 0)`");
                 }
@@ -1170,13 +1172,13 @@ let NodeDefines = {
          * cc.log("Node eulerAngles Y: " + node.eulerAngles.y);
          */
         rotationY: {
-            get () {
+            get() {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotationY` is deprecated since v2.1.0, please use `eulerAngles.y` instead. (`this.node.rotationY` -> `this.node.eulerAngles.y`)");
                 }
                 return this._eulerAngles.y;
             },
-            set (value) {
+            set(value) {
                 if (CC_DEBUG) {
                     cc.warn("`cc.Node.rotationY` is deprecated since v2.1.0, please set `eulerAngles` instead. (`this.node.rotationY = y` -> `this.node.is3DNode = true; this.node.eulerAngles = cc.v3(0, y, 0)`");
                 }
@@ -1199,14 +1201,14 @@ let NodeDefines = {
         },
 
         eulerAngles: {
-            get () {
+            get() {
                 if (CC_EDITOR) {
                     return this._eulerAngles;
                 }
                 else {
                     return Trs.toEuler(this._eulerAngles, this._trs);
                 }
-            }, set (v) {
+            }, set(v) {
                 if (CC_EDITOR) {
                     this._eulerAngles.set(v);
                 }
@@ -1224,10 +1226,10 @@ let NodeDefines = {
         // This property is used for Mesh Skeleton Animation
         // Should be removed when node.rotation upgrade to quaternion value
         quat: {
-            get () {
+            get() {
                 let trs = this._trs;
                 return new Quat(trs[3], trs[4], trs[5], trs[6]);
-            }, set (v) {
+            }, set(v) {
                 this.setRotation(v);
             }
         },
@@ -1241,10 +1243,10 @@ let NodeDefines = {
          * node.scale = 1;
          */
         scale: {
-            get () {
+            get() {
                 return this._trs[7];
             },
-            set (v) {
+            set(v) {
                 this.setScale(v);
             }
         },
@@ -1259,10 +1261,10 @@ let NodeDefines = {
          * cc.log("Node Scale X: " + node.scaleX);
          */
         scaleX: {
-            get () {
+            get() {
                 return this._trs[7];
             },
-            set (value) {
+            set(value) {
                 if (this._trs[7] !== value) {
                     this._trs[7] = value;
                     this.setLocalDirty(LocalDirtyFlag.ALL_SCALE);
@@ -1284,10 +1286,10 @@ let NodeDefines = {
          * cc.log("Node Scale Y: " + node.scaleY);
          */
         scaleY: {
-            get () {
+            get() {
                 return this._trs[8];
             },
-            set (value) {
+            set(value) {
                 if (this._trs[8] !== value) {
                     this._trs[8] = value;
                     this.setLocalDirty(LocalDirtyFlag.ALL_SCALE);
@@ -1306,10 +1308,10 @@ let NodeDefines = {
          * @type {Number}
          */
         scaleZ: {
-            get () {
+            get() {
                 return this._trs[9];
             },
-            set (value) {
+            set(value) {
                 if (this._trs[9] !== value) {
                     this._trs[9] = value;
                     this.setLocalDirty(LocalDirtyFlag.ALL_SCALE);
@@ -1333,10 +1335,10 @@ let NodeDefines = {
          * @deprecated since v2.2.1
          */
         skewX: {
-            get () {
+            get() {
                 return this._skewX;
             },
-            set (value) {
+            set(value) {
                 _skewWarn(value, this);
 
                 this._skewX = value;
@@ -1358,10 +1360,10 @@ let NodeDefines = {
          * @deprecated since v2.2.1
          */
         skewY: {
-            get () {
+            get() {
                 return this._skewY;
             },
-            set (value) {
+            set(value) {
                 _skewWarn(value, this);
 
                 this._skewY = value;
@@ -1381,10 +1383,10 @@ let NodeDefines = {
          * node.opacity = 255;
          */
         opacity: {
-            get () {
+            get() {
                 return this._opacity;
             },
-            set (value) {
+            set(value) {
                 value = cc.misc.clampf(value, 0, 255);
                 if (this._opacity !== value) {
                     this._opacity = value;
@@ -1406,10 +1408,10 @@ let NodeDefines = {
          * node.color = new cc.Color(255, 255, 255);
          */
         color: {
-            get () {
+            get() {
                 return this._color.clone()
             },
-            set (value) {
+            set(value) {
                 if (!this._color.equals(value)) {
                     this._color.set(value);
                     if (CC_DEV && value.a !== 255) {
@@ -1434,10 +1436,10 @@ let NodeDefines = {
          * node.anchorX = 0;
          */
         anchorX: {
-            get () {
+            get() {
                 return this._anchorPoint.x;
             },
-            set (value) {
+            set(value) {
                 var anchorPoint = this._anchorPoint;
                 if (anchorPoint.x !== value) {
                     anchorPoint.x = value;
@@ -1457,10 +1459,10 @@ let NodeDefines = {
          * node.anchorY = 0;
          */
         anchorY: {
-            get () {
+            get() {
                 return this._anchorPoint.y;
             },
-            set (value) {
+            set(value) {
                 var anchorPoint = this._anchorPoint;
                 if (anchorPoint.y !== value) {
                     anchorPoint.y = value;
@@ -1480,10 +1482,10 @@ let NodeDefines = {
          * node.width = 100;
          */
         width: {
-            get () {
+            get() {
                 return this._contentSize.width;
             },
-            set (value) {
+            set(value) {
                 if (value !== this._contentSize.width) {
                     if (CC_EDITOR) {
                         var clone = cc.size(this._contentSize.width, this._contentSize.height);
@@ -1510,10 +1512,10 @@ let NodeDefines = {
          * node.height = 100;
          */
         height: {
-            get () {
+            get() {
                 return this._contentSize.height;
             },
-            set (value) {
+            set(value) {
                 if (value !== this._contentSize.height) {
                     if (CC_EDITOR) {
                         var clone = cc.size(this._contentSize.width, this._contentSize.height);
@@ -1549,10 +1551,10 @@ let NodeDefines = {
          * cc.log("Node zIndex: " + node.zIndex);
          */
         zIndex: {
-            get () {
+            get() {
                 return this._localZOrder >> 16;
             },
-            set (value) {
+            set(value) {
                 if (value > macro.MAX_ZINDEX) {
                     cc.warnID(1636);
                     value = macro.MAX_ZINDEX;
@@ -1580,9 +1582,9 @@ let NodeDefines = {
          * @default false
         */
         is3DNode: {
-            get () {
+            get() {
                 return this._is3DNode;
-            }, set (v) {
+            }, set(v) {
                 if (this._is3DNode === v) {
                     return;
                 }
@@ -1599,7 +1601,7 @@ let NodeDefines = {
          * @type {Vec3}
          */
         up: {
-            get () {
+            get() {
                 var _up = Vec3.transformQuat(_urfVec3, Vec3.UP, this.getWorldRotation(_urfQuat));
                 return _up.clone();
             }
@@ -1613,7 +1615,7 @@ let NodeDefines = {
          * @type {Vec3}
          */
         right: {
-            get () {
+            get() {
                 var _right = Vec3.transformQuat(_urfVec3, Vec3.RIGHT, this.getWorldRotation(_urfQuat));
                 return _right.clone();
             }
@@ -1627,7 +1629,7 @@ let NodeDefines = {
          * @type {Vec3}
          */
         forward: {
-            get () {
+            get() {
                 var _forward = Vec3.transformQuat(_urfVec3, Vec3.FORWARD, this.getWorldRotation(_urfQuat));
                 return _forward.clone();
             }
@@ -1638,7 +1640,7 @@ let NodeDefines = {
      * @method constructor
      * @param {String} [name]
      */
-    ctor () {
+    ctor() {
         this._reorderChildDirty = false;
 
         // cache component
@@ -1672,7 +1674,7 @@ let NodeDefines = {
         EventType,
         _LocalDirtyFlag: LocalDirtyFlag,
         // is node but not scene
-        isNode (obj) {
+        isNode(obj) {
             return obj instanceof Node && (obj.constructor === Node || !(obj instanceof cc.Scene));
         },
         BuiltinGroupIndex
@@ -1680,14 +1682,14 @@ let NodeDefines = {
 
     // OVERRIDES
 
-    _onSiblingIndexChanged () {
+    _onSiblingIndexChanged() {
         // update rendering scene graph, sort them by arrivalOrder
         if (this._parent) {
             this._parent._delaySort();
         }
     },
 
-    _onPreDestroy () {
+    _onPreDestroy() {
         var destroyByParent = this._onPreDestroyBase();
 
         // Actions
@@ -1738,7 +1740,7 @@ let NodeDefines = {
         }
     },
 
-    _onPostActivated (active) {
+    _onPostActivated(active) {
         var actionManager = ActionManagerExist ? cc.director.getActionManager() : null;
         if (active) {
             // Refresh transform
@@ -1755,7 +1757,7 @@ let NodeDefines = {
         }
     },
 
-    _onHierarchyChanged (oldParent) {
+    _onHierarchyChanged(oldParent) {
         this._updateOrderOfArrival();
         // Fixed a bug where children and parent node groups were forced to synchronize, instead of only synchronizing `_cullingMask` value
         _updateCullingMask(this);
@@ -1781,7 +1783,7 @@ let NodeDefines = {
 
     // INTERNAL
 
-    _update3DFunction () {
+    _update3DFunction() {
         if (this._is3DNode) {
             this._updateLocalMatrix = updateLocalMatrix3D;
             this._calculWorldMatrix = calculWorldMatrix3D;
@@ -1803,7 +1805,7 @@ let NodeDefines = {
         }
     },
 
-    _initDataFromPool () {
+    _initDataFromPool() {
         if (!this._spaceInfo) {
             if (CC_EDITOR || CC_TEST) {
                 this._spaceInfo = {
@@ -1837,7 +1839,7 @@ let NodeDefines = {
         trs[9] = 1; // scale.z
     },
 
-    _backDataIntoPool () {
+    _backDataIntoPool() {
         if (!(CC_EDITOR || CC_TEST)) {
             // push back to pool
             nodeMemPool.push(this._spaceInfo);
@@ -1848,7 +1850,7 @@ let NodeDefines = {
         }
     },
 
-    _toEuler () {
+    _toEuler() {
         if (this.is3DNode) {
             Trs.toEuler(this._eulerAngles, this._trs);
         }
@@ -1858,7 +1860,7 @@ let NodeDefines = {
         }
     },
 
-    _fromEuler () {
+    _fromEuler() {
         if (this.is3DNode) {
             Trs.fromEuler(this._trs, this._eulerAngles);
         }
@@ -1867,7 +1869,7 @@ let NodeDefines = {
         }
     },
 
-    _initProperties () {
+    _initProperties() {
         if (this._is3DNode) {
             this._update3DFunction();
         }
@@ -1903,7 +1905,7 @@ let NodeDefines = {
     /*
      * The initializer for Node which will be called before all components onLoad
      */
-    _onBatchCreated (dontSyncChildPrefab) {
+    _onBatchCreated(dontSyncChildPrefab) {
         this._initProperties();
 
         // Fixed a bug where children and parent node groups were forced to synchronize, instead of only synchronizing `_cullingMask` value
@@ -1944,7 +1946,7 @@ let NodeDefines = {
     },
 
     // EVENT TARGET
-    _checkListenerMask () {
+    _checkListenerMask() {
         // Because Mask may be nested, need to find all the Mask components in the parent node.
         // The click area must satisfy all Masks to trigger the click.
         if (this._touchListener) {
@@ -1957,10 +1959,12 @@ let NodeDefines = {
         }
     },
 
-    _checknSetupSysEvent (type) {
+    /**系统事件对象的创建  并且注册到 eventManager 里面*/
+    _checknSetupSysEvent(type) {
         let newAdded = false;
         let forDispatch = false;
         if (_touchEvents.indexOf(type) !== -1) {
+            /**是否是touch事件 */
             if (!this._touchListener) {
                 this._touchListener = cc.EventListener.create({
                     event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -1978,6 +1982,7 @@ let NodeDefines = {
             forDispatch = true;
         }
         else if (_mouseEvents.indexOf(type) !== -1) {
+            /**鼠标事件 */
             if (!this._mouseListener) {
                 this._mouseListener = cc.EventListener.create({
                     event: cc.EventListener.MOUSE,
@@ -1994,6 +1999,7 @@ let NodeDefines = {
             }
             forDispatch = true;
         }
+        /**新添加 并且未在场中激活 */
         if (newAdded && !this._activeInHierarchy) {
             cc.director.getScheduler().schedule(function () {
                 if (!this._activeInHierarchy) {
@@ -2050,31 +2056,33 @@ let NodeDefines = {
      * node.on(cc.Node.EventType.ANCHOR_CHANGED, callback);
      * node.on(cc.Node.EventType.COLOR_CHANGED, callback);
      */
-    on (type, callback, target, useCapture) {
+    on(type, callback, target, useCapture) {
+        /**系统事件的注册 */
         let forDispatch = this._checknSetupSysEvent(type);
         if (forDispatch) {
             return this._onDispatch(type, callback, target, useCapture);
         }
         else {
+            /**节点属性变化事件注册 */
             switch (type) {
                 case EventType.POSITION_CHANGED:
-                this._eventMask |= POSITION_ON;
-                break;
+                    this._eventMask |= POSITION_ON;
+                    break;
                 case EventType.SCALE_CHANGED:
-                this._eventMask |= SCALE_ON;
-                break;
+                    this._eventMask |= SCALE_ON;
+                    break;
                 case EventType.ROTATION_CHANGED:
-                this._eventMask |= ROTATION_ON;
-                break;
+                    this._eventMask |= ROTATION_ON;
+                    break;
                 case EventType.SIZE_CHANGED:
-                this._eventMask |= SIZE_ON;
-                break;
+                    this._eventMask |= SIZE_ON;
+                    break;
                 case EventType.ANCHOR_CHANGED:
-                this._eventMask |= ANCHOR_ON;
-                break;
+                    this._eventMask |= ANCHOR_ON;
+                    break;
                 case EventType.COLOR_CHANGED:
-                this._eventMask |= COLOR_ON;
-                break;
+                    this._eventMask |= COLOR_ON;
+                    break;
             }
             if (!this._bubblingListeners) {
                 this._bubblingListeners = new EventTarget();
@@ -2105,7 +2113,7 @@ let NodeDefines = {
      * @example
      * node.once(cc.Node.EventType.ANCHOR_CHANGED, callback);
      */
-    once (type, callback, target, useCapture) {
+    once(type, callback, target, useCapture) {
         let forDispatch = this._checknSetupSysEvent(type);
 
         let listeners = null;
@@ -2122,7 +2130,8 @@ let NodeDefines = {
         }, undefined);
     },
 
-    _onDispatch (type, callback, target, useCapture) {
+    /**节点相关的事件全部注册到 EventTarget 对象上*/
+    _onDispatch(type, callback, target, useCapture) {
         // Accept also patameters like: (type, callback, useCapture)
         if (typeof target === 'boolean') {
             useCapture = target;
@@ -2136,13 +2145,16 @@ let NodeDefines = {
 
         var listeners = null;
         if (useCapture) {
+            // 捕获阶段
             listeners = this._capturingListeners = this._capturingListeners || new EventTarget();
         }
         else {
+            // 冒泡阶段
             listeners = this._bubblingListeners = this._bubblingListeners || new EventTarget();
         }
 
-        if ( !listeners.hasEventListener(type, callback, target) ) {
+        /**避免世界的重复注册 */
+        if (!listeners.hasEventListener(type, callback, target)) {
             listeners.on(type, callback, target);
 
             if (target && target.__eventTargets) {
@@ -2168,7 +2180,7 @@ let NodeDefines = {
      * node.off(cc.Node.EventType.TOUCH_START, callback, this.node);
      * node.off(cc.Node.EventType.ANCHOR_CHANGED, callback, this);
      */
-    off (type, callback, target, useCapture) {
+    off(type, callback, target, useCapture) {
         let touchEvent = _touchEvents.indexOf(type) !== -1;
         let mouseEvent = !touchEvent && _mouseEvents.indexOf(type) !== -1;
         if (touchEvent || mouseEvent) {
@@ -2195,29 +2207,29 @@ let NodeDefines = {
             if (!hasListeners) {
                 switch (type) {
                     case EventType.POSITION_CHANGED:
-                    this._eventMask &= ~POSITION_ON;
-                    break;
+                        this._eventMask &= ~POSITION_ON;
+                        break;
                     case EventType.SCALE_CHANGED:
-                    this._eventMask &= ~SCALE_ON;
-                    break;
+                        this._eventMask &= ~SCALE_ON;
+                        break;
                     case EventType.ROTATION_CHANGED:
-                    this._eventMask &= ~ROTATION_ON;
-                    break;
+                        this._eventMask &= ~ROTATION_ON;
+                        break;
                     case EventType.SIZE_CHANGED:
-                    this._eventMask &= ~SIZE_ON;
-                    break;
+                        this._eventMask &= ~SIZE_ON;
+                        break;
                     case EventType.ANCHOR_CHANGED:
-                    this._eventMask &= ~ANCHOR_ON;
-                    break;
+                        this._eventMask &= ~ANCHOR_ON;
+                        break;
                     case EventType.COLOR_CHANGED:
-                    this._eventMask &= ~COLOR_ON;
-                    break;
+                        this._eventMask &= ~COLOR_ON;
+                        break;
                 }
             }
         }
     },
 
-    _offDispatch (type, callback, target, useCapture) {
+    _offDispatch(type, callback, target, useCapture) {
         // Accept also patameters like: (type, callback, useCapture)
         if (typeof target === 'boolean') {
             useCapture = target;
@@ -2249,7 +2261,7 @@ let NodeDefines = {
      * @example
      * node.targetOff(target);
      */
-    targetOff (target) {
+    targetOff(target) {
         let listeners = this._bubblingListeners;
         if (listeners) {
             listeners.targetOff(target);
@@ -2299,7 +2311,7 @@ let NodeDefines = {
      * @param {String} type - The type of event.
      * @return {Boolean} True if a callback of the specified type is registered; false otherwise.
      */
-    hasEventListener (type) {
+    hasEventListener(type) {
         let has = false;
         if (this._bubblingListeners) {
             has = this._bubblingListeners.hasEventListener(type);
@@ -2328,7 +2340,7 @@ let NodeDefines = {
      * eventTarget.emit('fire', event);
      * eventTarget.emit('fire', message, emitter);
      */
-    emit (type, arg1, arg2, arg3, arg4, arg5) {
+    emit(type, arg1, arg2, arg3, arg4, arg5) {
         if (this._bubblingListeners) {
             this._bubblingListeners.emit(type, arg1, arg2, arg3, arg4, arg5);
         }
@@ -2343,7 +2355,7 @@ let NodeDefines = {
      * @method dispatchEvent
      * @param {Event} event - The Event object that is dispatched into the event flow
      */
-    dispatchEvent (event) {
+    dispatchEvent(event) {
         var _array = _cachedPool.get();
         _doDispatchEvent(this, event, _array);
         _cachedPool.put(_array);
@@ -2361,7 +2373,7 @@ let NodeDefines = {
      * @example
      * node.pauseSystemEvents(true);
      */
-    pauseSystemEvents (recursive) {
+    pauseSystemEvents(recursive) {
         eventManager.pauseTarget(this, recursive);
     },
 
@@ -2377,11 +2389,12 @@ let NodeDefines = {
      * @example
      * node.resumeSystemEvents(true);
      */
-    resumeSystemEvents (recursive) {
+    resumeSystemEvents(recursive) {
         eventManager.resumeTarget(this, recursive);
     },
 
-    _hitTest (point, listener) {
+    /**point 屏幕坐标 */
+    _hitTest(point, listener) {
         let w = this._contentSize.width,
             h = this._contentSize.height,
             cameraPt = _htVec3a,
@@ -2389,6 +2402,7 @@ let NodeDefines = {
 
         let camera = cc.Camera.findCamera(this);
         if (camera) {
+            // 将屏幕坐标转化未世界坐标
             camera.getScreenToWorldPoint(point, cameraPt);
         }
         else {
@@ -2452,7 +2466,7 @@ let NodeDefines = {
      * @param {Array} array - the array to receive targets
      * @example {@link cocos2d/core/event/_getCapturingTargets.js}
      */
-    _getCapturingTargets (type, array) {
+    _getCapturingTargets(type, array) {
         var parent = this.parent;
         while (parent) {
             if (parent._capturingListeners && parent._capturingListeners.hasEventListener(type)) {
@@ -2473,7 +2487,7 @@ let NodeDefines = {
      * @param {String} type - the event type
      * @param {Array} array - the array to receive targets
      */
-    _getBubblingTargets (type, array) {
+    _getBubblingTargets(type, array) {
         var parent = this.parent;
         while (parent) {
             if (parent._bubblingListeners && parent._bubblingListeners.hasEventListener(type)) {
@@ -2483,7 +2497,7 @@ let NodeDefines = {
         }
     },
 
-// ACTIONS
+    // ACTIONS
     /**
      * !#en
      * Executes an action, and returns the action that is executed.<br/>
@@ -2624,7 +2638,7 @@ let NodeDefines = {
     },
 
 
-// TRANSFORM RELATED
+    // TRANSFORM RELATED
     /**
      * !#en
      * Returns a copy of the position (x, y, z) of the node in its parent's coordinates.
@@ -2638,7 +2652,7 @@ let NodeDefines = {
      * @example
      * cc.log("Node Position: " + node.getPosition());
      */
-    getPosition (out) {
+    getPosition(out) {
         out = out || new Vec3();
         return Trs.toPosition(out, this._trs);
     },
@@ -2662,7 +2676,7 @@ let NodeDefines = {
      * @param {Number} [y] - Y coordinate for position
      * @param {Number} [z] - Z coordinate for position
      */
-    setPosition (newPosOrX, y, z) {
+    setPosition(newPosOrX, y, z) {
         let x;
         if (y === undefined) {
             x = newPosOrX.x;
@@ -2716,7 +2730,7 @@ let NodeDefines = {
      * @example
      * cc.log("Node Scale: " + node.getScale(cc.v3()));
      */
-    getScale (out) {
+    getScale(out) {
         if (out !== undefined) {
             return Trs.toScale(out, this._trs);
         }
@@ -2746,7 +2760,7 @@ let NodeDefines = {
      * node.setScale(cc.v3(2, 2, 2)); // for 3D node
      * node.setScale(2);
      */
-    setScale (newScaleOrX, y, z) {
+    setScale(newScaleOrX, y, z) {
         let x;
         // only one parameter, and it's a Vec2/Vec3:
         if (newScaleOrX && typeof newScaleOrX !== 'number') {
@@ -2794,7 +2808,7 @@ let NodeDefines = {
      * @param {Quat} out
      * @return {Quat} Quaternion object represents the rotation
      */
-    getRotation (out) {
+    getRotation(out) {
         if (out instanceof Quat) {
             return Trs.toRotation(out, this._trs);
         }
@@ -2815,7 +2829,7 @@ let NodeDefines = {
      * @param {Number} [z] z value of quternion
      * @param {Number} [w] w value of quternion
      */
-    setRotation (rotation, y, z, w) {
+    setRotation(rotation, y, z, w) {
         if (typeof rotation === 'number' && y === undefined) {
             if (CC_DEBUG) {
                 cc.warn("`cc.Node.setRotation(degree)` is deprecated since v2.1.0, please set `-cc.Node.angle` instead. (`this.node.setRotation(x)` -> `this.node.angle = -x`)");
@@ -2861,7 +2875,7 @@ let NodeDefines = {
      * @example
      * cc.log("Content Size: " + node.getContentSize());
      */
-    getContentSize () {
+    getContentSize() {
         return cc.size(this._contentSize.width, this._contentSize.height);
     },
 
@@ -2878,7 +2892,7 @@ let NodeDefines = {
      * node.setContentSize(cc.size(100, 100));
      * node.setContentSize(100, 100);
      */
-    setContentSize (size, height) {
+    setContentSize(size, height) {
         var locContentSize = this._contentSize;
         var clone;
         if (height === undefined) {
@@ -2928,7 +2942,7 @@ let NodeDefines = {
      * @example
      * cc.log("Node AnchorPoint: " + node.getAnchorPoint());
      */
-    getAnchorPoint () {
+    getAnchorPoint() {
         return cc.v2(this._anchorPoint);
     },
 
@@ -2954,7 +2968,7 @@ let NodeDefines = {
      * node.setAnchorPoint(cc.v2(1, 1));
      * node.setAnchorPoint(1, 1);
      */
-    setAnchorPoint (point, y) {
+    setAnchorPoint(point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
             if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
@@ -2979,7 +2993,7 @@ let NodeDefines = {
      * @param {Vec3} out
      * @param {Vec3} vec3
      */
-    _invTransformPoint (out, pos) {
+    _invTransformPoint(out, pos) {
         if (this._parent) {
             this._parent._invTransformPoint(out, pos);
         } else {
@@ -3011,7 +3025,7 @@ let NodeDefines = {
      * @param {Vec3} out
      * @return {Vec3}
      */
-    getWorldPosition (out) {
+    getWorldPosition(out) {
         Trs.toPosition(out, this._trs);
         let curr = this._parent;
         let ltrs;
@@ -3037,7 +3051,7 @@ let NodeDefines = {
      * @method setWorldPosition
      * @param {Vec3} pos
      */
-    setWorldPosition (pos) {
+    setWorldPosition(pos) {
         let ltrs = this._trs;
         if (CC_EDITOR) {
             var oldPosition = new cc.Vec3(ltrs[0], ltrs[1], ltrs[2]);
@@ -3071,7 +3085,7 @@ let NodeDefines = {
      * @param {Quat} out
      * @return {Quat}
      */
-    getWorldRotation (out) {
+    getWorldRotation(out) {
         Trs.toRotation(_gwrQuat, this._trs);
         Quat.copy(out, _gwrQuat);
         let curr = this._parent;
@@ -3089,7 +3103,7 @@ let NodeDefines = {
      * @method setWorldRotation
      * @param {Quat} val
      */
-    setWorldRotation (val) {
+    setWorldRotation(val) {
         if (this._parent) {
             this._parent.getWorldRotation(_swrQuat);
             Quat.conjugate(_swrQuat, _swrQuat);
@@ -3112,7 +3126,7 @@ let NodeDefines = {
      * @param {Vec3} out
      * @return {Vec3}
      */
-    getWorldScale (out) {
+    getWorldScale(out) {
         Trs.toScale(_gwsVec3, this._trs);
         Vec3.copy(out, _gwsVec3);
         let curr = this._parent;
@@ -3130,7 +3144,7 @@ let NodeDefines = {
      * @method setWorldScale
      * @param {Vec3} scale
      */
-    setWorldScale (scale) {
+    setWorldScale(scale) {
         if (this._parent) {
             this._parent.getWorldScale(_swsVec3);
             Vec3.div(_swsVec3, scale, _swsVec3);
@@ -3142,7 +3156,7 @@ let NodeDefines = {
         this.setLocalDirty(LocalDirtyFlag.ALL_SCALE);
     },
 
-    getWorldRT (out) {
+    getWorldRT(out) {
         let opos = _gwrtVec3a;
         let orot = _gwrtQuata;
         let ltrs = this._trs;
@@ -3176,7 +3190,7 @@ let NodeDefines = {
      * @param {Vec3} pos
      * @param {Vec3} [up] - default is (0,1,0)
      */
-    lookAt (pos, up) {
+    lookAt(pos, up) {
         this.getWorldPosition(_laVec3);
         Vec3.sub(_laVec3, _laVec3, pos); // NOTE: we use -z for view-dir
         Vec3.normalize(_laVec3, _laVec3);
@@ -3187,7 +3201,7 @@ let NodeDefines = {
 
     _updateLocalMatrix: updateLocalMatrix2D,
 
-    _calculWorldMatrix () {
+    _calculWorldMatrix() {
         // Avoid as much function call as possible
         if (this._localMatDirty & LocalDirtyFlag.TRSS) {
             this._updateLocalMatrix();
@@ -3206,7 +3220,7 @@ let NodeDefines = {
 
     _mulMat: mulMat2D,
 
-    _updateWorldMatrix () {
+    _updateWorldMatrix() {
         if (this._parent) {
             this._parent._updateWorldMatrix();
         }
@@ -3220,7 +3234,7 @@ let NodeDefines = {
         }
     },
 
-    setLocalDirty (flag) {
+    setLocalDirty(flag) {
         this._localMatDirty |= flag;
         this._worldMatDirty = true;
 
@@ -3232,7 +3246,7 @@ let NodeDefines = {
         }
     },
 
-    setWorldDirty () {
+    setWorldDirty() {
         this._worldMatDirty = true;
     },
 
@@ -3247,7 +3261,7 @@ let NodeDefines = {
      * let mat4 = cc.mat4();
      * node.getLocalMatrix(mat4);
      */
-    getLocalMatrix (out) {
+    getLocalMatrix(out) {
         this._updateLocalMatrix();
         return Mat4.copy(out, this._matrix);
     },
@@ -3263,7 +3277,7 @@ let NodeDefines = {
      * let mat4 = cc.mat4();
      * node.getWorldMatrix(mat4);
      */
-    getWorldMatrix (out) {
+    getWorldMatrix(out) {
         this._updateWorldMatrix();
         return Mat4.copy(out, this._worldMatrix);
     },
@@ -3283,7 +3297,7 @@ let NodeDefines = {
      * var newVec2 = node.convertToNodeSpaceAR(cc.v2(100, 100));
      * var newVec3 = node.convertToNodeSpaceAR(cc.v3(100, 100, 100));
      */
-    convertToNodeSpaceAR (worldPoint, out) {
+    convertToNodeSpaceAR(worldPoint, out) {
         this._updateWorldMatrix();
         Mat4.invert(_mat4_temp, this._worldMatrix);
 
@@ -3312,7 +3326,7 @@ let NodeDefines = {
      * var newVec2 = node.convertToWorldSpaceAR(cc.v2(100, 100));
      * var newVec3 = node.convertToWorldSpaceAR(cc.v3(100, 100, 100));
      */
-    convertToWorldSpaceAR (nodePoint, out) {
+    convertToWorldSpaceAR(nodePoint, out) {
         this._updateWorldMatrix();
         if (nodePoint instanceof cc.Vec2) {
             out = out || new cc.Vec2();
@@ -3324,22 +3338,22 @@ let NodeDefines = {
         }
     },
 
-// OLD TRANSFORM ACCESS APIs
- /**
-     * !#en Converts a Point to node (local) space coordinates then add the anchor point position.
-     * So the return position will be related to the left bottom corner of the node's bounding box.
-     * This equals to the API behavior of cocos2d-x, you probably want to use convertToNodeSpaceAR instead
-     * !#zh 将一个点转换到节点 (局部) 坐标系，并加上锚点的坐标。<br/>
-     * 也就是说返回的坐标是相对于节点包围盒左下角的坐标。<br/>
-     * 这个 API 的设计是为了和 cocos2d-x 中行为一致，更多情况下你可能需要使用 convertToNodeSpaceAR。
-     * @method convertToNodeSpace
-     * @deprecated since v2.1.3
-     * @param {Vec2} worldPoint
-     * @return {Vec2}
-     * @example
-     * var newVec2 = node.convertToNodeSpace(cc.v2(100, 100));
-     */
-    convertToNodeSpace (worldPoint) {
+    // OLD TRANSFORM ACCESS APIs
+    /**
+        * !#en Converts a Point to node (local) space coordinates then add the anchor point position.
+        * So the return position will be related to the left bottom corner of the node's bounding box.
+        * This equals to the API behavior of cocos2d-x, you probably want to use convertToNodeSpaceAR instead
+        * !#zh 将一个点转换到节点 (局部) 坐标系，并加上锚点的坐标。<br/>
+        * 也就是说返回的坐标是相对于节点包围盒左下角的坐标。<br/>
+        * 这个 API 的设计是为了和 cocos2d-x 中行为一致，更多情况下你可能需要使用 convertToNodeSpaceAR。
+        * @method convertToNodeSpace
+        * @deprecated since v2.1.3
+        * @param {Vec2} worldPoint
+        * @return {Vec2}
+        * @example
+        * var newVec2 = node.convertToNodeSpace(cc.v2(100, 100));
+        */
+    convertToNodeSpace(worldPoint) {
         this._updateWorldMatrix();
         Mat4.invert(_mat4_temp, this._worldMatrix);
         let out = new cc.Vec2();
@@ -3361,7 +3375,7 @@ let NodeDefines = {
      * @example
      * var newVec2 = node.convertToWorldSpace(cc.v2(100, 100));
      */
-    convertToWorldSpace (nodePoint) {
+    convertToWorldSpace(nodePoint) {
         this._updateWorldMatrix();
         let out = new cc.Vec2(
             nodePoint.x - this._anchorPoint.x * this._contentSize.width,
@@ -3383,7 +3397,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getNodeToParentTransform(affineTransform);
      */
-    getNodeToParentTransform (out) {
+    getNodeToParentTransform(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3415,7 +3429,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getNodeToParentTransformAR(affineTransform);
      */
-    getNodeToParentTransformAR (out) {
+    getNodeToParentTransformAR(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3434,7 +3448,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getNodeToWorldTransform(affineTransform);
      */
-    getNodeToWorldTransform (out) {
+    getNodeToWorldTransform(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3465,7 +3479,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getNodeToWorldTransformAR(affineTransform);
      */
-    getNodeToWorldTransformAR (out) {
+    getNodeToWorldTransformAR(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3488,7 +3502,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getParentToNodeTransform(affineTransform);
      */
-    getParentToNodeTransform (out) {
+    getParentToNodeTransform(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3508,7 +3522,7 @@ let NodeDefines = {
      * let affineTransform = cc.AffineTransform.create();
      * node.getWorldToNodeTransform(affineTransform);
      */
-    getWorldToNodeTransform (out) {
+    getWorldToNodeTransform(out) {
         if (!out) {
             out = AffineTrans.identity();
         }
@@ -3527,7 +3541,7 @@ let NodeDefines = {
      * @example
      * var newVec2 = node.convertTouchToNodeSpace(touch);
      */
-    convertTouchToNodeSpace (touch) {
+    convertTouchToNodeSpace(touch) {
         return this.convertToNodeSpace(touch.getLocation());
     },
 
@@ -3541,7 +3555,7 @@ let NodeDefines = {
      * @example
      * var newVec2 = node.convertTouchToNodeSpaceAR(touch);
      */
-    convertTouchToNodeSpaceAR (touch) {
+    convertTouchToNodeSpaceAR(touch) {
         return this.convertToNodeSpaceAR(touch.getLocation());
     },
 
@@ -3555,7 +3569,7 @@ let NodeDefines = {
      * @example
      * var boundingBox = node.getBoundingBox();
      */
-    getBoundingBox () {
+    getBoundingBox() {
         this._updateLocalMatrix();
         let width = this._contentSize.width;
         let height = this._contentSize.height;
@@ -3579,7 +3593,7 @@ let NodeDefines = {
      * @example
      * var newRect = node.getBoundingBoxToWorld();
      */
-    getBoundingBoxToWorld () {
+    getBoundingBoxToWorld() {
         if (this._parent) {
             this._parent._updateWorldMatrix();
             return this._getBoundingBoxTo();
@@ -3589,7 +3603,7 @@ let NodeDefines = {
         }
     },
 
-    _getBoundingBoxTo () {
+    _getBoundingBoxTo() {
         let width = this._contentSize.width;
         let height = this._contentSize.height;
         let rect = cc.rect(
@@ -3617,7 +3631,7 @@ let NodeDefines = {
         return rect;
     },
 
-    _updateOrderOfArrival () {
+    _updateOrderOfArrival() {
         var arrivalOrder = this._parent ? ++this._parent._childArrivalOrder : 0;
         this._localZOrder = (this._localZOrder & 0xffff0000) | arrivalOrder;
 
@@ -3635,7 +3649,7 @@ let NodeDefines = {
      * @type {Integer}
      * @default 0
      */
-    setSelfGroupIndex (groupIndex) {
+    setSelfGroupIndex(groupIndex) {
         this._groupIndex = groupIndex || 0;
         this._cullingMask = 1 << groupIndex;
         if (CC_JSB && CC_NATIVERENDERER) {
@@ -3655,7 +3669,7 @@ let NodeDefines = {
      * @example
      * node.addChild(newNode, 1, "node");
      */
-    addChild (child, zIndex, name) {
+    addChild(child, zIndex, name) {
         if (CC_DEV && !cc.Node.isNode(child)) {
             return cc.errorID(1634, cc.js.getClassName(child));
         }
@@ -3680,7 +3694,7 @@ let NodeDefines = {
      * @example
      * node.cleanup();
      */
-    cleanup () {
+    cleanup() {
         // actions
         ActionManagerExist && cc.director.getActionManager().removeAllActionsFromTarget(this);
         // event
@@ -3702,7 +3716,7 @@ let NodeDefines = {
      *
      * @method sortAllChildren
      */
-    sortAllChildren () {
+    sortAllChildren() {
         if (this._reorderChildDirty) {
 
             this._reorderChildDirty = false;
@@ -3727,7 +3741,7 @@ let NodeDefines = {
                     child = _children[i];
                     let j = i;
                     for (; j > 0 &&
-                            (child2 = _children[j - 1])._localZOrder > child._localZOrder; j--) {
+                        (child2 = _children[j - 1])._localZOrder > child._localZOrder; j--) {
                         _children[j] = child2;
                     }
                     _children[j] = child;
@@ -3739,7 +3753,7 @@ let NodeDefines = {
         }
     },
 
-    _delaySort () {
+    _delaySort() {
         if (!this._reorderChildDirty) {
             this._reorderChildDirty = true;
             cc.director.__fastOn(cc.Director.EVENT_AFTER_UPDATE, this.sortAllChildren, this);

@@ -38,8 +38,8 @@ let inputManager = {
 
     _isRegisterEvent: false,
 
-    _preTouchPoint: cc.v2(0,0),
-    _prevMousePoint: cc.v2(0,0),
+    _preTouchPoint: cc.v2(0, 0),
+    _prevMousePoint: cc.v2(0, 0),
 
     _preTouchPool: [],
     _preTouchPoolPointer: 0,
@@ -49,7 +49,7 @@ let inputManager = {
     // Maximum available touches, it's also the length of _touches array
     _maxTouches: 10,
     // Global touches map with touch id as key and index in _touches as value 
-    _touchesIntegerDict:{},
+    _touchesIntegerDict: {},
     // A bit mask for index of _touches, every bit indicates whether the correspond touch is currently valid
     _indexBitsUsed: 0,
 
@@ -59,7 +59,7 @@ let inputManager = {
     _touchCount: 0,
 
     _accelEnabled: false,
-    _accelInterval: 1/5,
+    _accelInterval: 1 / 5,
     _accelMinus: 1,
     _accelCurTime: 0,
     _acceleration: null,
@@ -74,7 +74,7 @@ let inputManager = {
         height: 0,
     },
 
-    _getUnUsedIndex () {
+    _getUnUsedIndex() {
         let now = cc.sys.now();
         const timeout = macro.TOUCH_TIMEOUT
 
@@ -87,7 +87,7 @@ let inputManager = {
 
         for (let i = 0; i < this._maxTouches; i++) {
             if (!(temp & 0x00000001)) {
-                if (unused === -1){
+                if (unused === -1) {
                     unused = i;
                     this._indexBitsUsed |= (1 << i);
                 }
@@ -116,7 +116,7 @@ let inputManager = {
 
     _glView: null,
 
-    _updateCanvasBoundingRect () {
+    _updateCanvasBoundingRect() {
         let element = cc.game.canvas;
         let canvasBoundingRect = this._canvasBoundingRect;
 
@@ -148,7 +148,7 @@ let inputManager = {
      * @method handleTouchesBegin
      * @param {Array} touches
      */
-    handleTouchesBegin (touches) {
+    handleTouchesBegin(touches) {
         let now = sys.now();
 
         let selTouch, index, touchID, handleTouches = [];
@@ -157,8 +157,9 @@ let inputManager = {
         let locTouchesIntDict = this._touchesIntegerDict;
         let locTouchesCache = this._touchesCache;
 
-        for (let i = 0, len = touches.length; i < len; i ++) {
+        for (let i = 0, len = touches.length; i < len; i++) {
             selTouch = touches[i];
+            // 手指认证ID
             touchID = selTouch.getID();
 
             index = locTouchesIntDict[touchID];
@@ -181,10 +182,12 @@ let inputManager = {
                 handleTouches.push(ccTouch);
             }
         }
+        /**是否有需要处理的Touch对象*/
         if (handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
             let touchEvent = new cc.Event.EventTouch(handleTouches);
             touchEvent._eventCode = cc.Event.EventTouch.BEGAN;
+            /**派发Touch事件*/
             eventManager.dispatchEvent(touchEvent);
         }
     },
@@ -193,7 +196,7 @@ let inputManager = {
      * @method handleTouchesMove
      * @param {Array} touches
      */
-    handleTouchesMove (touches) {
+    handleTouchesMove(touches) {
         let now = sys.now();
 
         let selTouch, index, touchID, handleTouches = [];
@@ -232,7 +235,7 @@ let inputManager = {
      * @method handleTouchesEnd
      * @param {Array} touches
      */
-    handleTouchesEnd (touches) {
+    handleTouchesEnd(touches) {
         let handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if (handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
@@ -247,7 +250,7 @@ let inputManager = {
      * @method handleTouchesCancel
      * @param {Array} touches
      */
-    handleTouchesCancel (touches) {
+    handleTouchesCancel(touches) {
         let handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if (handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
@@ -263,13 +266,13 @@ let inputManager = {
      * @param {Array} touches
      * @returns {Array}
      */
-    getSetOfTouchesEndOrCancel (touches) {
+    getSetOfTouchesEndOrCancel(touches) {
         let selTouch, index, touchID, handleTouches = [];
 
         let locTouches = this._touches;
         let locTouchesIntDict = this._touchesIntegerDict;
         let locTouchesCache = this._touchesCache;
-        for (let i = 0, len = touches.length; i< len; i ++) {
+        for (let i = 0, len = touches.length; i < len; i++) {
             selTouch = touches[i];
             touchID = selTouch.getID();
             index = locTouchesIntDict[touchID];
@@ -298,7 +301,7 @@ let inputManager = {
      * @method getGlobalTouchCount
      * @return Current global touches count (only valid touches)
      */
-    getGlobalTouchCount () {
+    getGlobalTouchCount() {
         return this._touchCount;
     },
 
@@ -307,16 +310,18 @@ let inputManager = {
      * @method getGlobalTouches
      * @return A global touches map with touch id as key and touch object as value, only contains currently valid touches
      */
-    getGlobalTouches () {
+    getGlobalTouches() {
         return this._touchesCache;
     },
 
     /**
+     * 获取手指触摸的上一次触摸点  
+     * note: 如果没有上一次的触摸点返回当前的触摸点
      * @method getPreTouch
      * @param {Touch} touch
      * @return {Touch}
      */
-    getPreTouch (touch) {
+    getPreTouch(touch) {
         let preTouch = null;
         let locPreTouchPool = this._preTouchPool;
         let id = touch.getID();
@@ -335,7 +340,7 @@ let inputManager = {
      * @method setPreTouch
      * @param {Touch} touch
      */
-    setPreTouch (touch) {
+    setPreTouch(touch) {
         let find = false;
         let locPreTouchPool = this._preTouchPool;
         let id = touch.getID();
@@ -363,7 +368,7 @@ let inputManager = {
      * @param {Vec2} pos
      * @return {Touch}
      */
-    getTouchByXY (tx, ty, pos) {
+    getTouchByXY(tx, ty, pos) {
         let locPreTouch = this._preTouchPoint;
         let location = this._glView.convertToLocationInView(tx, ty, pos);
         let touch = new cc.Touch(location.x, location.y, 0);
@@ -380,7 +385,7 @@ let inputManager = {
      * @param {Number} eventType
      * @returns {Event.EventMouse}
      */
-    getMouseEvent (location, pos, eventType) {
+    getMouseEvent(location, pos, eventType) {
         let locPreMouse = this._prevMousePoint;
         let mouseEvent = new cc.Event.EventMouse(eventType);
         mouseEvent._setPrevCursor(locPreMouse.x, locPreMouse.y);
@@ -397,7 +402,7 @@ let inputManager = {
      * @param {Vec2} pos
      * @return {Vec2}
      */
-    getPointByEvent (event, pos) {
+    getPointByEvent(event, pos) {
         // qq , uc and safari browser can't calculate pageY correctly, need to refresh canvas bounding rect
         if (cc.sys.browserType === cc.sys.BROWSER_TYPE_QQ
             || cc.sys.browserType === cc.sys.BROWSER_TYPE_UC
@@ -406,12 +411,12 @@ let inputManager = {
         }
 
         if (event.pageX != null)  //not avalable in <= IE8
-            return {x: event.pageX, y: event.pageY};
+            return { x: event.pageX, y: event.pageY };
 
         pos.left -= document.body.scrollLeft;
         pos.top -= document.body.scrollTop;
 
-        return {x: event.clientX, y: event.clientY};
+        return { x: event.clientX, y: event.clientY };
     },
 
     /**
@@ -420,27 +425,42 @@ let inputManager = {
      * @param {Vec2} pos
      * @returns {Array}
      */
-    getTouchesByEvent (event, pos) {
-        let touchArr = [], locView = this._glView;
+    getTouchesByEvent(event, pos) {
+        /**Touch Array */
+        let touchArr = [], locView = this._glView;// cc.view
         let touch_event, touch, preLocation;
         let locPreTouch = this._preTouchPoint;
 
+        /**
+         * changedTouches TouchList 对象
+         * event.changedTouches  本次事件发生变化的触点
+         *          触摸到屏幕的手指列表(可能一个也可能是多个)
+         * event.touches 
+         *          正在屏幕上的手指
+         * targetTouches
+         *          当前元素正在触摸的手指列表
+         */
         let length = event.changedTouches.length;
         for (let i = 0; i < length; i++) {
+            // Touch 对象
             touch_event = event.changedTouches[i];
             if (touch_event) {
                 let location;
+                /**根据浏览器类型 计算触屏幕的位置  将屏幕坐标转换为游戏视图 下的坐标 */
                 if (sys.BROWSER_TYPE_FIREFOX === sys.browserType)
                     location = locView.convertToLocationInView(touch_event.pageX, touch_event.pageY, pos, _vec2);
                 else
                     location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos, _vec2);
-                if (touch_event.identifier != null) { // identifier  触点认证码
+                if (touch_event.identifier != null) {
+                    // identifier  触点认证码 唯一的数字 ID note: 可以通过触点认证码 来判断是否是那一个手指在移动
                     touch = new cc.Touch(location.x, location.y, touch_event.identifier);
-                    //use Touch Pool
                     preLocation = this.getPreTouch(touch).getLocation();
+                    /**设置Touch事件的上一次位置*/
                     touch._setPrevPoint(preLocation.x, preLocation.y);
+                    /**将Touch 放入池子里面 */
                     this.setPreTouch(touch);
                 } else {
+                    // 不存在 identifier
                     touch = new cc.Touch(location.x, location.y);
                     touch._setPrevPoint(locPreTouch.x, locPreTouch.y);
                 }
@@ -453,11 +473,12 @@ let inputManager = {
     },
 
     /**
+     * 注册系统事件
      * @method registerSystemEvent
      * @param {HTMLElement} element
      */
-    registerSystemEvent (element) {
-        if(this._isRegisterEvent) return;
+    registerSystemEvent(element) {
+        if (this._isRegisterEvent) return;
 
         this._glView = cc.view;
         let selfPointer = this;
@@ -489,7 +510,7 @@ let inputManager = {
                     selfPointer._mousePressed = false;
 
                     let location = selfPointer.getPointByEvent(event, canvasBoundingRect);
-                    if (!cc.rect(canvasBoundingRect.left, canvasBoundingRect.top, canvasBoundingRect.width, canvasBoundingRect.height).contains(location)){
+                    if (!cc.rect(canvasBoundingRect.left, canvasBoundingRect.top, canvasBoundingRect.width, canvasBoundingRect.height).contains(location)) {
                         selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, canvasBoundingRect)]);
 
                         let mouseEvent = selfPointer.getMouseEvent(location, canvasBoundingRect, cc.Event.EventMouse.UP);
@@ -548,14 +569,14 @@ let inputManager = {
 
         if (window.navigator.msPointerEnabled) {
             let _pointerEventsMap = {
-                "MSPointerDown"     : selfPointer.handleTouchesBegin,
-                "MSPointerMove"     : selfPointer.handleTouchesMove,
-                "MSPointerUp"       : selfPointer.handleTouchesEnd,
-                "MSPointerCancel"   : selfPointer.handleTouchesCancel
+                "MSPointerDown": selfPointer.handleTouchesBegin,
+                "MSPointerMove": selfPointer.handleTouchesMove,
+                "MSPointerUp": selfPointer.handleTouchesEnd,
+                "MSPointerCancel": selfPointer.handleTouchesCancel
             };
             for (let eventName in _pointerEventsMap) {
                 let touchEvent = _pointerEventsMap[eventName];
-                element.addEventListener(eventName, function (event){
+                element.addEventListener(eventName, function (event) {
                     let documentElement = document.documentElement;
                     canvasBoundingRect.adjustedLeft = canvasBoundingRect.left - documentElement.scrollLeft;
                     canvasBoundingRect.adjustedTop = canvasBoundingRect.top - documentElement.scrollTop;
@@ -570,30 +591,39 @@ let inputManager = {
         if (supportTouches) {
             let _touchEventsMap = {
                 "touchstart": function (touchesToHandle) {
+                    /**touchesToHandle Touche Array*/
                     selfPointer.handleTouchesBegin(touchesToHandle);
                     element.focus();
                 },
                 "touchmove": function (touchesToHandle) {
+                    /**touchesToHandle Touche Array*/
                     selfPointer.handleTouchesMove(touchesToHandle);
                 },
                 "touchend": function (touchesToHandle) {
+                    /**touchesToHandle Touche Array*/
                     selfPointer.handleTouchesEnd(touchesToHandle);
                 },
                 "touchcancel": function (touchesToHandle) {
+                    /**touchesToHandle Touche Array*/
                     selfPointer.handleTouchesCancel(touchesToHandle);
                 }
             };
 
+            /**注册Touch 事件 */
             let registerTouchEvent = function (eventName) {
+                /**eventName 对应的处理函数 */
                 let handler = _touchEventsMap[eventName];
-                element.addEventListener(eventName, (function(event) {
+                element.addEventListener(eventName, (function (event) {
                     if (!event.changedTouches) return;
                     let body = document.body;
-
+                    /**canvasBoundingRect Left Top 数据调整 */
                     canvasBoundingRect.adjustedLeft = canvasBoundingRect.left - (body.scrollLeft || window.scrollX || 0);
                     canvasBoundingRect.adjustedTop = canvasBoundingRect.top - (body.scrollTop || window.scrollY || 0);
+
                     handler(selfPointer.getTouchesByEvent(event, canvasBoundingRect));
+                    /**停止传递 */
                     event.stopPropagation();
+                    /** 阻止默认事件 */
                     event.preventDefault();
                 }), false);
             };
@@ -607,15 +637,15 @@ let inputManager = {
         this._isRegisterEvent = true;
     },
 
-    _registerKeyboardEvent () {},
+    _registerKeyboardEvent() { },
 
-    _registerAccelerometerEvent () {},
+    _registerAccelerometerEvent() { },
 
     /**
      * @method update
      * @param {Number} dt
      */
-    update (dt) {
+    update(dt) {
         if (this._accelCurTime > this._accelInterval) {
             this._accelCurTime -= this._accelInterval;
             eventManager.dispatchEvent(new cc.Event.EventAcceleration(this._acceleration));

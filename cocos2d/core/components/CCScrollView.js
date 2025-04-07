@@ -34,12 +34,12 @@ const MOVEMENT_FACTOR = 0.7;
 let _tempPoint = cc.v2();
 let _tempPrevPoint = cc.v2();
 
-let quintEaseOut = function(time) {
+let quintEaseOut = function (time) {
     time -= 1;
     return (time * time * time * time * time + 1);
 };
 
-let getTimeInMilliseconds = function() {
+let getTimeInMilliseconds = function () {
     let currentTime = new Date();
     return currentTime.getMilliseconds();
 };
@@ -55,67 +55,67 @@ const EventType = cc.Enum({
      * !#zh 滚动视图滚动到顶部边界事件
      * @property {Number} SCROLL_TO_TOP
      */
-    SCROLL_TO_TOP : 0,
+    SCROLL_TO_TOP: 0,
     /**
      * !#en The event emmitted when ScrollView scroll to the bottom boundary of inner container
      * !#zh 滚动视图滚动到底部边界事件
      * @property {Number} SCROLL_TO_BOTTOM
      */
-    SCROLL_TO_BOTTOM : 1,
+    SCROLL_TO_BOTTOM: 1,
     /**
      * !#en The event emmitted when ScrollView scroll to the left boundary of inner container
      * !#zh 滚动视图滚动到左边界事件
      * @property {Number} SCROLL_TO_LEFT
      */
-    SCROLL_TO_LEFT : 2,
+    SCROLL_TO_LEFT: 2,
     /**
      * !#en The event emmitted when ScrollView scroll to the right boundary of inner container
      * !#zh 滚动视图滚动到右边界事件
      * @property {Number} SCROLL_TO_RIGHT
      */
-    SCROLL_TO_RIGHT : 3,
+    SCROLL_TO_RIGHT: 3,
     /**
      * !#en The event emmitted when ScrollView is scrolling
      * !#zh 滚动视图正在滚动时发出的事件
      * @property {Number} SCROLLING
      */
-    SCROLLING : 4,
+    SCROLLING: 4,
     /**
      * !#en The event emmitted when ScrollView scroll to the top boundary of inner container and start bounce
      * !#zh 滚动视图滚动到顶部边界并且开始回弹时发出的事件
      * @property {Number} BOUNCE_TOP
      */
-    BOUNCE_TOP : 5,
+    BOUNCE_TOP: 5,
     /**
      * !#en The event emmitted when ScrollView scroll to the bottom boundary of inner container and start bounce
      * !#zh 滚动视图滚动到底部边界并且开始回弹时发出的事件
      * @property {Number} BOUNCE_BOTTOM
      */
-    BOUNCE_BOTTOM : 6,
+    BOUNCE_BOTTOM: 6,
     /**
      * !#en The event emmitted when ScrollView scroll to the left boundary of inner container and start bounce
      * !#zh 滚动视图滚动到左边界并且开始回弹时发出的事件
      * @property {Number} BOUNCE_LEFT
      */
-    BOUNCE_LEFT : 7,
+    BOUNCE_LEFT: 7,
     /**
      * !#en The event emmitted when ScrollView scroll to the right boundary of inner container and start bounce
      * !#zh 滚动视图滚动到右边界并且开始回弹时发出的事件
      * @property {Number} BOUNCE_RIGHT
      */
-    BOUNCE_RIGHT : 8,
+    BOUNCE_RIGHT: 8,
     /**
      * !#en The event emmitted when ScrollView auto scroll ended
      * !#zh 滚动视图滚动结束的时候发出的事件
      * @property {Number} SCROLL_ENDED
      */
-    SCROLL_ENDED : 9,
+    SCROLL_ENDED: 9,
     /**
      * !#en The event emmitted when user release the touch
      * !#zh 当用户松手的时候会发出一个事件
      * @property {Number} TOUCH_UP
      */
-    TOUCH_UP : 10,
+    TOUCH_UP: 10,
     /**
      * !#en The event emmitted when ScrollView auto scroll ended with a threshold
      * !#zh 滚动视图自动滚动快要结束的时候发出的事件
@@ -131,18 +131,18 @@ const EventType = cc.Enum({
 });
 
 const eventMap = {
-    'scroll-to-top' : EventType.SCROLL_TO_TOP,
+    'scroll-to-top': EventType.SCROLL_TO_TOP,
     'scroll-to-bottom': EventType.SCROLL_TO_BOTTOM,
-    'scroll-to-left' : EventType.SCROLL_TO_LEFT,
-    'scroll-to-right' : EventType.SCROLL_TO_RIGHT,
-    'scrolling' : EventType.SCROLLING,
-    'bounce-bottom' : EventType.BOUNCE_BOTTOM,
-    'bounce-left' : EventType.BOUNCE_LEFT,
-    'bounce-right' : EventType.BOUNCE_RIGHT,
-    'bounce-top' : EventType.BOUNCE_TOP,
+    'scroll-to-left': EventType.SCROLL_TO_LEFT,
+    'scroll-to-right': EventType.SCROLL_TO_RIGHT,
+    'scrolling': EventType.SCROLLING,
+    'bounce-bottom': EventType.BOUNCE_BOTTOM,
+    'bounce-left': EventType.BOUNCE_LEFT,
+    'bounce-right': EventType.BOUNCE_RIGHT,
+    'bounce-top': EventType.BOUNCE_TOP,
     'scroll-ended': EventType.SCROLL_ENDED,
-    'touch-up' : EventType.TOUCH_UP,
-    'scroll-ended-with-threshold' : EventType.AUTOSCROLL_ENDED_WITH_THRESHOLD,
+    'touch-up': EventType.TOUCH_UP,
+    'scroll-ended-with-threshold': EventType.AUTOSCROLL_ENDED_WITH_THRESHOLD,
     'scroll-began': EventType.SCROLL_BEGAN
 };
 
@@ -167,7 +167,7 @@ let ScrollView = cc.Class({
         executeInEditMode: false,
     },
 
-    ctor () {
+    ctor() {
         this._topBoundary = 0;
         this._bottomBoundary = 0;
         this._leftBoundary = 0;
@@ -210,7 +210,7 @@ let ScrollView = cc.Class({
             type: cc.Node,
             tooltip: CC_DEV && 'i18n:COMPONENT.scrollview.content',
             formerlySerializedAs: 'content',
-            notify (oldValue) {
+            notify(oldValue) {
                 this._calculateBoundary();
             }
         },
@@ -293,7 +293,7 @@ let ScrollView = cc.Class({
             default: undefined,
             type: cc.Scrollbar,
             tooltip: CC_DEV && 'i18n:COMPONENT.scrollview.horizontal_bar',
-            notify () {
+            notify() {
                 if (this.horizontalScrollBar) {
                     this.horizontalScrollBar.setTargetScrollView(this);
                     this._updateScrollBar(0);
@@ -311,7 +311,7 @@ let ScrollView = cc.Class({
             default: undefined,
             type: cc.Scrollbar,
             tooltip: CC_DEV && 'i18n:COMPONENT.scrollview.vertical_bar',
-            notify () {
+            notify() {
                 if (this.verticalScrollBar) {
                     this.verticalScrollBar.setTargetScrollView(this);
                     this._updateScrollBar(0);
@@ -369,7 +369,7 @@ let ScrollView = cc.Class({
      * // Scroll to the bottom of the view.
      * scrollView.scrollToBottom(0.1);
      */
-    scrollToBottom (timeInSecond, attenuated) {
+    scrollToBottom(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, 0),
             applyToHorizontal: false,
@@ -394,7 +394,7 @@ let ScrollView = cc.Class({
      * // Scroll to the top of the view.
      * scrollView.scrollToTop(0.1);
      */
-    scrollToTop (timeInSecond, attenuated) {
+    scrollToTop(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, 1),
             applyToHorizontal: false,
@@ -419,7 +419,7 @@ let ScrollView = cc.Class({
      * // Scroll to the left of the view.
      * scrollView.scrollToLeft(0.1);
      */
-    scrollToLeft (timeInSecond, attenuated) {
+    scrollToLeft(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, 0),
             applyToHorizontal: true,
@@ -444,7 +444,7 @@ let ScrollView = cc.Class({
      * // Scroll to the right of the view.
      * scrollView.scrollToRight(0.1);
      */
-    scrollToRight (timeInSecond, attenuated) {
+    scrollToRight(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(1, 0),
             applyToHorizontal: true,
@@ -469,7 +469,7 @@ let ScrollView = cc.Class({
      * // Scroll to the upper left corner of the view.
      * scrollView.scrollToTopLeft(0.1);
      */
-    scrollToTopLeft (timeInSecond, attenuated) {
+    scrollToTopLeft(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, 1),
             applyToHorizontal: true,
@@ -494,7 +494,7 @@ let ScrollView = cc.Class({
      * // Scroll to the top right corner of the view.
      * scrollView.scrollToTopRight(0.1);
      */
-    scrollToTopRight (timeInSecond, attenuated) {
+    scrollToTopRight(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(1, 1),
             applyToHorizontal: true,
@@ -519,7 +519,7 @@ let ScrollView = cc.Class({
      * // Scroll to the lower left corner of the view.
      * scrollView.scrollToBottomLeft(0.1);
      */
-    scrollToBottomLeft (timeInSecond, attenuated) {
+    scrollToBottomLeft(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, 0),
             applyToHorizontal: true,
@@ -544,7 +544,7 @@ let ScrollView = cc.Class({
      * // Scroll to the lower right corner of the view.
      * scrollView.scrollToBottomRight(0.1);
      */
-    scrollToBottomRight (timeInSecond, attenuated) {
+    scrollToBottomRight(timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(1, 0),
             applyToHorizontal: true,
@@ -573,7 +573,7 @@ let ScrollView = cc.Class({
      * let maxScrollOffset = this.getMaxScrollOffset();
      * scrollView.scrollToOffset(cc.v2(maxScrollOffset.x / 2, 0), 0.1);
      */
-    scrollToOffset (offset, timeInSecond, attenuated) {
+    scrollToOffset(offset, timeInSecond, attenuated) {
         let maxScrollOffset = this.getMaxScrollOffset();
 
         let anchor = cc.v2(0, 0);
@@ -587,7 +587,7 @@ let ScrollView = cc.Class({
         if (maxScrollOffset.y === 0) {
             anchor.y = 1;
         } else {
-            anchor.y = (maxScrollOffset.y - offset.y ) / maxScrollOffset.y;
+            anchor.y = (maxScrollOffset.y - offset.y) / maxScrollOffset.y;
         }
 
         this.scrollTo(anchor, timeInSecond, attenuated);
@@ -599,8 +599,8 @@ let ScrollView = cc.Class({
      * @method getScrollOffset
      * @return {Vec2}  - A Vec2 value indicate the current scroll offset.
      */
-    getScrollOffset () {
-        let topDelta =  this._getContentTopBoundary() - this._topBoundary;
+    getScrollOffset() {
+        let topDelta = this._getContentTopBoundary() - this._topBoundary;
         let leftDeta = this._getContentLeftBoundary() - this._leftBoundary;
 
         return cc.v2(leftDeta, topDelta);
@@ -612,13 +612,13 @@ let ScrollView = cc.Class({
      * @method getMaxScrollOffset
      * @return {Vec2} - A Vec2 value indicate the maximize scroll offset in x and y axis.
      */
-    getMaxScrollOffset () {
+    getMaxScrollOffset() {
         let viewSize = this._view.getContentSize();
         let contentSize = this.content.getContentSize();
-        let horizontalMaximizeOffset =  contentSize.width - viewSize.width;
+        let horizontalMaximizeOffset = contentSize.width - viewSize.width;
         let verticalMaximizeOffset = contentSize.height - viewSize.height;
         horizontalMaximizeOffset = horizontalMaximizeOffset >= 0 ? horizontalMaximizeOffset : 0;
-        verticalMaximizeOffset = verticalMaximizeOffset >=0 ? verticalMaximizeOffset : 0;
+        verticalMaximizeOffset = verticalMaximizeOffset >= 0 ? verticalMaximizeOffset : 0;
 
         return cc.v2(horizontalMaximizeOffset, verticalMaximizeOffset);
     },
@@ -635,7 +635,7 @@ let ScrollView = cc.Class({
      * // Scroll to middle position.
      * scrollView.scrollToBottomRight(0.5, 0.1);
      */
-    scrollToPercentHorizontal (percent, timeInSecond, attenuated) {
+    scrollToPercentHorizontal(percent, timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(percent, 0),
             applyToHorizontal: true,
@@ -664,7 +664,7 @@ let ScrollView = cc.Class({
      * // Horizontal scroll to view right.
      * scrollView.scrollTo(cc.v2(1, 0), 0.1);
      */
-    scrollTo (anchor, timeInSecond, attenuated) {
+    scrollTo(anchor, timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(anchor),
             applyToHorizontal: true,
@@ -689,7 +689,7 @@ let ScrollView = cc.Class({
      * // Scroll to middle position.
      * scrollView.scrollToPercentVertical(0.5, 0.1);
      */
-    scrollToPercentVertical (percent, timeInSecond, attenuated) {
+    scrollToPercentVertical(percent, timeInSecond, attenuated) {
         let moveDelta = this._calculateMovePercentDelta({
             anchor: cc.v2(0, percent),
             applyToHorizontal: false,
@@ -708,7 +708,7 @@ let ScrollView = cc.Class({
      * !#zh  停止自动滚动, 调用此 API 可以让 Scrollview 立即停止滚动
      * @method stopAutoScroll
      */
-    stopAutoScroll () {
+    stopAutoScroll() {
         this._autoScrolling = false;
         this._autoScrollAccumulatedTime = this._autoScrollTotalTime;
     },
@@ -719,7 +719,7 @@ let ScrollView = cc.Class({
      * @method setContentPosition
      * @param {Vec2} position - The position in content's parent space.
      */
-    setContentPosition (position) {
+    setContentPosition(position) {
         if (position.fuzzyEquals(this.getContentPosition(), EPSILON)) {
             return;
         }
@@ -734,17 +734,17 @@ let ScrollView = cc.Class({
      * @method getContentPosition
      * @returns {Vec2} - The content's position in its parent space.
      */
-    getContentPosition () {
+    getContentPosition() {
         return this.content.getPosition();
     },
-    
+
     /**
      * !#en Query whether the user is currently dragging the ScrollView to scroll it
      * !#zh 用户是否在拖拽当前滚动视图
      * @method isScrolling
      * @returns {Boolean} - Whether the user is currently dragging the ScrollView to scroll it
      */
-    isScrolling () {
+    isScrolling() {
         return this._scrolling;
     },
 
@@ -754,12 +754,12 @@ let ScrollView = cc.Class({
      * @method isAutoScrolling
      * @returns {Boolean} - Whether the ScrollView is currently scrolling because of a bounceback or inertia slowdown.
      */
-    isAutoScrolling () {
+    isAutoScrolling() {
         return this._autoScrolling;
     },
-    
-    //private methods
-    _registerEvent () {
+
+    //private methods touch 事件注册
+    _registerEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this._onTouchBegan, this, true);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this._onTouchMoved, this, true);
         this.node.on(cc.Node.EventType.TOUCH_END, this._onTouchEnded, this, true);
@@ -767,7 +767,8 @@ let ScrollView = cc.Class({
         this.node.on(cc.Node.EventType.MOUSE_WHEEL, this._onMouseWheel, this, true);
     },
 
-    _unregisterEvent () {
+    // touch 事件注销
+    _unregisterEvent() {
         this.node.off(cc.Node.EventType.TOUCH_START, this._onTouchBegan, this, true);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this._onTouchMoved, this, true);
         this.node.off(cc.Node.EventType.TOUCH_END, this._onTouchEnded, this, true);
@@ -775,7 +776,7 @@ let ScrollView = cc.Class({
         this.node.off(cc.Node.EventType.MOUSE_WHEEL, this._onMouseWheel, this, true);
     },
 
-    _onMouseWheel (event, captureListeners) {
+    _onMouseWheel(event, captureListeners) {
         if (!this.enabledInHierarchy) return;
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
@@ -783,22 +784,22 @@ let ScrollView = cc.Class({
         let wheelPrecision = -0.1;
         //On the windows platform, the scrolling speed of the mouse wheel of ScrollView on chrome and firebox is different
         if (cc.sys.os === cc.sys.OS_WINDOWS && cc.sys.browserType === cc.sys.BROWSER_TYPE_FIREFOX) {
-            wheelPrecision = -0.1/3;
+            wheelPrecision = -0.1 / 3;
         }
-        if(CC_JSB || CC_RUNTIME) {
+        if (CC_JSB || CC_RUNTIME) {
             wheelPrecision = -7;
         }
-        if(this.vertical) {
+        if (this.vertical) {
             deltaMove = cc.v2(0, event.getScrollY() * wheelPrecision);
         }
-        else if(this.horizontal) {
+        else if (this.horizontal) {
             deltaMove = cc.v2(event.getScrollY() * wheelPrecision, 0);
         }
 
         this._mouseWheelEventElapsedTime = 0;
         this._processDeltaMove(deltaMove);
 
-        if(!this._stopMouseWheel) {
+        if (!this._stopMouseWheel) {
             this._handlePressLogic();
             this.schedule(this._checkMouseWheel, 1.0 / 60);
             this._stopMouseWheel = true;
@@ -807,7 +808,7 @@ let ScrollView = cc.Class({
         this._stopPropagationIfTargetIsMe(event);
     },
 
-    _checkMouseWheel (dt) {
+    _checkMouseWheel(dt) {
         let currentOutOfBoundary = this._getHowMuchOutOfBoundary();
         let maxElapsedTime = 0.1;
 
@@ -830,7 +831,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    _calculateMovePercentDelta (options) {
+    _calculateMovePercentDelta(options) {
         let anchor = options.anchor;
         let applyToHorizontal = options.applyToHorizontal;
         let applyToVertical = options.applyToVertical;
@@ -861,7 +862,7 @@ let ScrollView = cc.Class({
         return moveDelta;
     },
 
-    _moveContentToTopLeft (scrollViewSize) {
+    _moveContentToTopLeft(scrollViewSize) {
         let contentSize = this.content.getContentSize();
 
         let bottomDeta = this._getContentBottomBoundary() - this._bottomBoundary;
@@ -887,11 +888,11 @@ let ScrollView = cc.Class({
         this._adjustContentOutOfBoundary();
     },
 
-    _calculateBoundary () {
+    _calculateBoundary() {
         if (this.content) {
             //refresh content size
             let layout = this.content.getComponent(cc.Layout);
-            if(layout && layout.enabledInHierarchy) {
+            if (layout && layout.enabledInHierarchy) {
                 layout.updateLayout();
             }
             let viewSize = this._view.getContentSize();
@@ -915,22 +916,25 @@ let ScrollView = cc.Class({
      * @method hasNestedViewGroup
      * @returns {Boolean} - Whether this ScrollView has the nested view group.
      */
-    hasNestedViewGroup (event, captureListeners) {
+    hasNestedViewGroup(event, captureListeners) {
+        // 不在捕获阶段
         if (event.eventPhase !== cc.Event.CAPTURING_PHASE) return;
 
         if (captureListeners) {
+            // captureListeners 捕获的相关节点
             //captureListeners are arranged from child to parent
-            for (let i = 0; i < captureListeners.length; ++i){
+            for (let i = 0; i < captureListeners.length; ++i) {
                 let item = captureListeners[i];
 
                 if (this.node === item) {
+                    // 存在嵌套  target 是 ViewGroup this.node 在 捕获列表里面
                     if (event.target.getComponent(cc.ViewGroup)) {
                         return true;
                     }
                     return false;
                 }
 
-                if(item.getComponent(cc.ViewGroup)) {
+                if (item.getComponent(cc.ViewGroup)) {
                     return true;
                 }
             }
@@ -939,15 +943,17 @@ let ScrollView = cc.Class({
     },
 
     //This is for Scrollview as children of a Button
-    _stopPropagationIfTargetIsMe (event) {
+    _stopPropagationIfTargetIsMe(event) {
         if (event.eventPhase === cc.Event.AT_TARGET && event.target === this.node) {
             event.stopPropagation();
         }
     },
 
     // touch event handler
-    _onTouchBegan (event, captureListeners) {
+    _onTouchBegan(event, captureListeners) {
+        // 该组件没有激活  并且没有在场景中激活
         if (!this.enabledInHierarchy) return;
+        // 是否存在嵌套的ViewGroup
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
         let touch = event.touch;
@@ -958,7 +964,7 @@ let ScrollView = cc.Class({
         this._stopPropagationIfTargetIsMe(event);
     },
 
-    _onTouchMoved (event, captureListeners) {
+    _onTouchMoved(event, captureListeners) {
         if (!this.enabledInHierarchy) return;
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
@@ -987,7 +993,7 @@ let ScrollView = cc.Class({
         this._stopPropagationIfTargetIsMe(event);
     },
 
-    _onTouchEnded (event, captureListeners) {
+    _onTouchEnded(event, captureListeners) {
         if (!this.enabledInHierarchy) return;
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
@@ -1004,38 +1010,38 @@ let ScrollView = cc.Class({
         }
     },
 
-    _onTouchCancelled (event, captureListeners) {
+    _onTouchCancelled(event, captureListeners) {
         if (!this.enabledInHierarchy) return;
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
         // Filte touch cancel event send from self
         if (!event.simulate) {
             let touch = event.touch;
-            if(this.content){
+            if (this.content) {
                 this._handleReleaseLogic(touch);
             }
         }
         this._stopPropagationIfTargetIsMe(event);
     },
 
-    _processDeltaMove (deltaMove) {
+    _processDeltaMove(deltaMove) {
         this._scrollChildren(deltaMove);
         this._gatherTouchMove(deltaMove);
     },
 
     // Contains node angle calculations
-    _getLocalAxisAlignDelta (touch) {
+    _getLocalAxisAlignDelta(touch) {
         this.node.convertToNodeSpaceAR(touch.getLocation(), _tempPoint);
         this.node.convertToNodeSpaceAR(touch.getPreviousLocation(), _tempPrevPoint);
         return _tempPoint.sub(_tempPrevPoint);
     },
 
-    _handleMoveLogic (touch) {
+    _handleMoveLogic(touch) {
         let deltaMove = this._getLocalAxisAlignDelta(touch);
         this._processDeltaMove(deltaMove);
     },
 
-    _scrollChildren (deltaMove) {
+    _scrollChildren(deltaMove) {
         deltaMove = this._clampDelta(deltaMove);
 
         let realMove = deltaMove;
@@ -1053,7 +1059,7 @@ let ScrollView = cc.Class({
 
         let vertical_scrollEventType = "";
         let horizontal_scrollEventType = "";
-        
+
         if (this.vertical) {
             if (realMove.y > 0) { //up
                 let icBottomPos = this.content.y - this.content.anchorY * this.content.height;
@@ -1105,7 +1111,7 @@ let ScrollView = cc.Class({
 
     },
 
-    _handlePressLogic () {
+    _handlePressLogic() {
         if (this._autoScrolling) {
             this._dispatchEvent('scroll-ended');
         }
@@ -1119,7 +1125,7 @@ let ScrollView = cc.Class({
         this._onScrollBarTouchBegan();
     },
 
-    _clampDelta (delta) {
+    _clampDelta(delta) {
         let contentSize = this.content.getContentSize();
         let scrollViewSize = this._view.getContentSize();
         if (contentSize.width < scrollViewSize.width) {
@@ -1132,7 +1138,7 @@ let ScrollView = cc.Class({
         return delta;
     },
 
-    _gatherTouchMove (delta) {
+    _gatherTouchMove(delta) {
         delta = this._clampDelta(delta);
 
         while (this._touchMoveDisplacements.length >= NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED) {
@@ -1147,7 +1153,7 @@ let ScrollView = cc.Class({
         this._touchMovePreviousTimestamp = timeStamp;
     },
 
-    _startBounceBackIfNeeded () {
+    _startBounceBackIfNeeded() {
         if (!this.elastic) {
             return false;
         }
@@ -1173,7 +1179,7 @@ let ScrollView = cc.Class({
         return true;
     },
 
-    _processInertiaScroll () {
+    _processInertiaScroll() {
         let bounceBackStarted = this._startBounceBackIfNeeded();
         if (!bounceBackStarted && this.inertia) {
             let touchMoveVelocity = this._calculateTouchMoveVelocity();
@@ -1185,7 +1191,7 @@ let ScrollView = cc.Class({
         this._onScrollBarTouchEnded();
     },
 
-    _handleReleaseLogic (touch) {
+    _handleReleaseLogic(touch) {
         let delta = this._getLocalAxisAlignDelta(touch);
         this._gatherTouchMove(delta);
         this._processInertiaScroll();
@@ -1197,12 +1203,12 @@ let ScrollView = cc.Class({
         }
     },
 
-    _isOutOfBoundary () {
+    _isOutOfBoundary() {
         let outOfBoundary = this._getHowMuchOutOfBoundary();
         return !outOfBoundary.fuzzyEquals(cc.v2(0, 0), EPSILON);
     },
 
-    _isNecessaryAutoScrollBrake () {
+    _isNecessaryAutoScrollBrake() {
         if (this._autoScrollBraking) {
             return true;
         }
@@ -1222,11 +1228,11 @@ let ScrollView = cc.Class({
         return false;
     },
 
-    getScrollEndedEventTiming () {
+    getScrollEndedEventTiming() {
         return EPSILON;
     },
 
-    _processAutoScrolling (dt) {
+    _processAutoScrolling(dt) {
         let isAutoScrollBrake = this._isNecessaryAutoScrollBrake();
         let brakingFactor = isAutoScrollBrake ? OUT_OF_BOUNDARY_BREAKING_FACTOR : 1;
         this._autoScrollAccumulatedTime += dt * (1 / brakingFactor);
@@ -1276,13 +1282,13 @@ let ScrollView = cc.Class({
         }
     },
 
-    _startInertiaScroll (touchMoveVelocity) {
+    _startInertiaScroll(touchMoveVelocity) {
         let inertiaTotalMovement = touchMoveVelocity.mul(MOVEMENT_FACTOR);
         this._startAttenuatingAutoScroll(inertiaTotalMovement, touchMoveVelocity);
     },
 
-    _calculateAttenuatedFactor (distance) {
-        if (this.brake <= 0){
+    _calculateAttenuatedFactor(distance) {
+        if (this.brake <= 0) {
             return (1 - this.brake);
         }
 
@@ -1290,7 +1296,7 @@ let ScrollView = cc.Class({
         return (1 - this.brake) * (1 / (1 + distance * 0.000014 + distance * distance * 0.000000008));
     },
 
-    _startAttenuatingAutoScroll (deltaMove, initialVelocity) {
+    _startAttenuatingAutoScroll(deltaMove, initialVelocity) {
         let time = this._calculateAutoScrollTimeByInitalSpeed(initialVelocity.mag());
 
 
@@ -1327,11 +1333,11 @@ let ScrollView = cc.Class({
         this._startAutoScroll(targetDelta, time, true);
     },
 
-    _calculateAutoScrollTimeByInitalSpeed (initalSpeed) {
+    _calculateAutoScrollTimeByInitalSpeed(initalSpeed) {
         return Math.sqrt(Math.sqrt(initalSpeed / 5));
     },
 
-    _startAutoScroll (deltaMove, timeInSecond, attenuated) {
+    _startAutoScroll(deltaMove, timeInSecond, attenuated) {
         let adjustedDeltaMove = this._flattenVectorByDirection(deltaMove);
 
         this._autoScrolling = true;
@@ -1350,9 +1356,9 @@ let ScrollView = cc.Class({
         }
     },
 
-    _calculateTouchMoveVelocity () {
+    _calculateTouchMoveVelocity() {
         let totalTime = 0;
-        totalTime = this._touchMoveTimeDeltas.reduce(function(a, b) {
+        totalTime = this._touchMoveTimeDeltas.reduce(function (a, b) {
             return a + b;
         }, totalTime);
 
@@ -1361,22 +1367,22 @@ let ScrollView = cc.Class({
         }
 
         let totalMovement = cc.v2(0, 0);
-        totalMovement = this._touchMoveDisplacements.reduce(function(a, b) {
+        totalMovement = this._touchMoveDisplacements.reduce(function (a, b) {
             return a.add(b);
         }, totalMovement);
 
         return cc.v2(totalMovement.x * (1 - this.brake) / totalTime,
-                    totalMovement.y * (1 - this.brake) / totalTime);
+            totalMovement.y * (1 - this.brake) / totalTime);
     },
 
-    _flattenVectorByDirection (vector) {
+    _flattenVectorByDirection(vector) {
         let result = vector;
         result.x = this.horizontal ? result.x : 0;
         result.y = this.vertical ? result.y : 0;
         return result;
     },
 
-    _moveContent (deltaMove, canStartBounceBack) {
+    _moveContent(deltaMove, canStartBounceBack) {
         let adjustedMove = this._flattenVectorByDirection(deltaMove);
         let newPosition = this.getContentPosition().add(adjustedMove);
 
@@ -1390,27 +1396,27 @@ let ScrollView = cc.Class({
         }
     },
 
-    _getContentLeftBoundary () {
+    _getContentLeftBoundary() {
         let contentPos = this.getContentPosition();
         return contentPos.x - this.content.getAnchorPoint().x * this.content.getContentSize().width;
     },
 
-    _getContentRightBoundary () {
+    _getContentRightBoundary() {
         let contentSize = this.content.getContentSize();
         return this._getContentLeftBoundary() + contentSize.width;
     },
 
-    _getContentTopBoundary () {
+    _getContentTopBoundary() {
         let contentSize = this.content.getContentSize();
         return this._getContentBottomBoundary() + contentSize.height;
     },
 
-    _getContentBottomBoundary () {
+    _getContentBottomBoundary() {
         let contentPos = this.getContentPosition();
         return contentPos.y - this.content.getAnchorPoint().y * this.content.getContentSize().height;
     },
 
-    _getHowMuchOutOfBoundary (addition) {
+    _getHowMuchOutOfBoundary(addition) {
         addition = addition || cc.v2(0, 0);
         if (addition.fuzzyEquals(cc.v2(0, 0), EPSILON) && !this._outOfBoundaryAmountDirty) {
             return this._outOfBoundaryAmount;
@@ -1439,7 +1445,7 @@ let ScrollView = cc.Class({
         return outOfBoundaryAmount;
     },
 
-    _updateScrollBarState () {
+    _updateScrollBarState() {
         if (!this.content) {
             return;
         }
@@ -1462,7 +1468,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    _updateScrollBar (outOfBoundary) {
+    _updateScrollBar(outOfBoundary) {
         if (this.horizontalScrollBar) {
             this.horizontalScrollBar._onScroll(outOfBoundary);
         }
@@ -1472,7 +1478,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    _onScrollBarTouchBegan () {
+    _onScrollBarTouchBegan() {
         if (this.horizontalScrollBar) {
             this.horizontalScrollBar._onTouchBegan();
         }
@@ -1482,7 +1488,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    _onScrollBarTouchEnded () {
+    _onScrollBarTouchEnded() {
         if (this.horizontalScrollBar) {
             this.horizontalScrollBar._onTouchEnded();
         }
@@ -1492,14 +1498,14 @@ let ScrollView = cc.Class({
         }
     },
 
-    _dispatchEvent (event) {
+    _dispatchEvent(event) {
         if (event === 'scroll-ended') {
             this._scrollEventEmitMask = 0;
 
         } else if (event === 'scroll-to-top'
-                   || event === 'scroll-to-bottom'
-                   || event === 'scroll-to-left'
-                   || event === 'scroll-to-right') {
+            || event === 'scroll-to-bottom'
+            || event === 'scroll-to-left'
+            || event === 'scroll-to-right') {
 
             let flag = (1 << eventMap[event]);
             if (this._scrollEventEmitMask & flag) {
@@ -1513,7 +1519,7 @@ let ScrollView = cc.Class({
         this.node.emit(event, this);
     },
 
-    _adjustContentOutOfBoundary () {
+    _adjustContentOutOfBoundary() {
         this._outOfBoundaryAmountDirty = true;
         if (this._isOutOfBoundary()) {
             let outOfBoundary = this._getHowMuchOutOfBoundary(cc.v2(0, 0));
@@ -1525,7 +1531,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    start () {
+    start() {
         this._calculateBoundary();
         //Because widget component will adjust content position and scrollview position is correct after visit
         //So this event could make sure the content is on the correct position after loading.
@@ -1534,7 +1540,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    _hideScrollbar () {
+    _hideScrollbar() {
         if (this.horizontalScrollBar) {
             this.horizontalScrollBar.hide();
         }
@@ -1544,7 +1550,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    onDisable () {
+    onDisable() {
         if (!CC_EDITOR) {
             this._unregisterEvent();
             if (this.content) {
@@ -1561,7 +1567,7 @@ let ScrollView = cc.Class({
         this.stopAutoScroll();
     },
 
-    onEnable () {
+    onEnable() {
         if (!CC_EDITOR) {
             this._registerEvent();
             if (this.content) {
@@ -1577,7 +1583,7 @@ let ScrollView = cc.Class({
         this._updateScrollBarState();
     },
 
-    update (dt) {
+    update(dt) {
         if (this._autoScrolling) {
             this._processAutoScrolling(dt);
         }
@@ -1696,12 +1702,12 @@ cc.ScrollView = module.exports = ScrollView;
  * @param {ScrollView} scrollView - The ScrollView component.
  */
 
- /**
- * !#en
- * Note: This event is emitted from the node to which the component belongs.
- * !#zh
- * 注意：此事件是从该组件所属的 Node 上面派发出来的，需要用 node.on 来监听。
- * @event scroll-began
- * @param {Event.EventCustom} event
- * @param {ScrollView} scrollView - The ScrollView component.
- */
+/**
+* !#en
+* Note: This event is emitted from the node to which the component belongs.
+* !#zh
+* 注意：此事件是从该组件所属的 Node 上面派发出来的，需要用 node.on 来监听。
+* @event scroll-began
+* @param {Event.EventCustom} event
+* @param {ScrollView} scrollView - The ScrollView component.
+*/

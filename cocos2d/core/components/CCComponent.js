@@ -88,7 +88,7 @@ var Component = cc.Class({
         },
 
         name: {
-            get () {
+            get() {
                 if (this._name) {
                     return this._name;
                 }
@@ -99,7 +99,7 @@ var Component = cc.Class({
                 }
                 return this.node.name + '<' + className + '>';
             },
-            set (value) {
+            set(value) {
                 this._name = value;
             },
             visible: false
@@ -115,14 +115,14 @@ var Component = cc.Class({
          * cc.log(comp.uuid);
          */
         uuid: {
-            get () {
+            get() {
                 return this._id;
             },
             visible: false
         },
 
         __scriptAsset: CC_EDITOR && {
-            get () {},
+            get() { },
             //set (value) {
             //    if (this.__scriptUuid !== value) {
             //        if (value && Editor.Utils.UuidUtils.isUuid(value._uuid)) {
@@ -164,10 +164,10 @@ var Component = cc.Class({
          * cc.log(comp.enabled);
          */
         enabled: {
-            get () {
+            get() {
                 return this._enabled;
             },
-            set (value) {
+            set(value) {
                 if (this._enabled !== value) {
                     this._enabled = value;
                     if (this.node._activeInHierarchy) {
@@ -195,11 +195,12 @@ var Component = cc.Class({
          * cc.log(comp.enabledInHierarchy);
          */
         enabledInHierarchy: {
-            get () {
+            get() {
                 if (CC_EDITOR) {
                     // _activeInHierarchy will not be updated before node's onRestore
                     return this._enabled && this.node?._active && this.node?._parent?._activeInHierarchy;
                 }
+                /**组件启用  and 节点在场景中激活  */
                 return this._enabled && this.node && this.node._activeInHierarchy;
             },
             visible: false
@@ -215,7 +216,7 @@ var Component = cc.Class({
          * cc.log(this._isOnLoadCalled > 0);
          */
         _isOnLoadCalled: {
-            get () {
+            get() {
                 return this._objFlags & IsOnLoadCalled;
             }
         },
@@ -349,7 +350,7 @@ var Component = cc.Class({
      * addComponent<T extends Component>(type: {new(): T}): T
      * addComponent(className: string): any
      */
-    addComponent (typeOrClassName) {
+    addComponent(typeOrClassName) {
         return this.node.addComponent(typeOrClassName);
     },
 
@@ -373,7 +374,7 @@ var Component = cc.Class({
      * getComponent<T extends Component>(type: {prototype: T}): T
      * getComponent(className: string): any
      */
-    getComponent (typeOrClassName) {
+    getComponent(typeOrClassName) {
         return this.node.getComponent(typeOrClassName);
     },
 
@@ -391,7 +392,7 @@ var Component = cc.Class({
      * getComponents<T extends Component>(type: {prototype: T}): T[]
      * getComponents(className: string): any[]
      */
-    getComponents (typeOrClassName) {
+    getComponents(typeOrClassName) {
         return this.node.getComponents(typeOrClassName);
     },
 
@@ -409,7 +410,7 @@ var Component = cc.Class({
      * getComponentInChildren<T extends Component>(type: {prototype: T}): T
      * getComponentInChildren(className: string): any
      */
-    getComponentInChildren (typeOrClassName) {
+    getComponentInChildren(typeOrClassName) {
         return this.node.getComponentInChildren(typeOrClassName);
     },
 
@@ -427,7 +428,7 @@ var Component = cc.Class({
      * getComponentsInChildren<T extends Component>(type: {prototype: T}): T[]
      * getComponentsInChildren(className: string): any[]
      */
-    getComponentsInChildren (typeOrClassName) {
+    getComponentsInChildren(typeOrClassName) {
         return this.node.getComponentsInChildren(typeOrClassName);
     },
 
@@ -485,7 +486,7 @@ var Component = cc.Class({
 
     // OVERRIDE
 
-    destroy () {
+    destroy() {
         if (CC_EDITOR) {
             var depend = this.node._getDependComponent(this);
             if (depend) {
@@ -500,7 +501,7 @@ var Component = cc.Class({
         }
     },
 
-    _onPreDestroy () {
+    _onPreDestroy() {
         if (ActionManagerExist) {
             cc.director.getActionManager().removeAllActionsFromTarget(this);
         }
@@ -528,7 +529,7 @@ var Component = cc.Class({
         this.node._removeComponent(this);
     },
 
-    _instantiate (cloned) {
+    _instantiate(cloned) {
         if (!cloned) {
             cloned = cc.instantiate._clone(this, this);
         }
@@ -536,7 +537,7 @@ var Component = cc.Class({
         return cloned;
     },
 
-// Scheduler
+    // Scheduler
 
     /**
      * !#en
@@ -556,7 +557,7 @@ var Component = cc.Class({
      * }
      * this.schedule(timeCallback, 1);
      */
-    schedule (callback, interval, repeat, delay) {
+    schedule(callback, interval, repeat, delay) {
         cc.assertID(callback, 1619);
 
         interval = interval || 0;
@@ -589,7 +590,7 @@ var Component = cc.Class({
      * }
      * this.scheduleOnce(timeCallback, 2);
      */
-    scheduleOnce (callback, delay) {
+    scheduleOnce(callback, delay) {
         this.schedule(callback, 0, 0, delay);
     },
 
@@ -602,7 +603,7 @@ var Component = cc.Class({
      * @example
      * this.unschedule(_callback);
      */
-    unschedule (callback_fn) {
+    unschedule(callback_fn) {
         if (!callback_fn)
             return;
 
@@ -618,7 +619,7 @@ var Component = cc.Class({
      * @example
      * this.unscheduleAllCallbacks();
      */
-    unscheduleAllCallbacks () {
+    unscheduleAllCallbacks() {
         cc.director.getScheduler().unscheduleAllForTarget(this);
     },
 });
