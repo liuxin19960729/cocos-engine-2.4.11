@@ -949,7 +949,7 @@ let ScrollView = cc.Class({
         }
     },
 
-    // touch event handler
+    // touch start  event handler
     _onTouchBegan(event, captureListeners) {
         // 该组件没有激活  并且没有在场景中激活
         if (!this.enabledInHierarchy) return;
@@ -964,19 +964,23 @@ let ScrollView = cc.Class({
         this._stopPropagationIfTargetIsMe(event);
     },
 
+    // touch move  event handler
     _onTouchMoved(event, captureListeners) {
+        // 该组件没有激活  并且没有在场景中激活
         if (!this.enabledInHierarchy) return;
+        // 是否存在嵌套的ViewGroup
         if (this.hasNestedViewGroup(event, captureListeners)) return;
 
         let touch = event.touch;
         if (this.content) {
             this._handleMoveLogic(touch);
         }
-        // Do not prevent touch events in inner nodes
+        // Do not prevent touch events in inner nodes 子节点的触摸事件是否取消
         if (!this.cancelInnerEvents) {
             return;
         }
-
+        // getStartLocation 触点落下的位置
+        // deltaMove 滑动距离
         let deltaMove = touch.getLocation().sub(touch.getStartLocation());
         //FIXME: touch move delta should be calculated by DPI.
         if (deltaMove.mag() > 7) {
@@ -1036,11 +1040,13 @@ let ScrollView = cc.Class({
         return _tempPoint.sub(_tempPrevPoint);
     },
 
+    /**处理触摸移动逻辑 */
     _handleMoveLogic(touch) {
         let deltaMove = this._getLocalAxisAlignDelta(touch);
         this._processDeltaMove(deltaMove);
     },
 
+    /**滑动子节点 */
     _scrollChildren(deltaMove) {
         deltaMove = this._clampDelta(deltaMove);
 
@@ -1111,7 +1117,9 @@ let ScrollView = cc.Class({
 
     },
 
+    /**处理触摸下逻辑 */
     _handlePressLogic() {
+        /** 如果正在自动滚动，则发送滚动结束事件 */
         if (this._autoScrolling) {
             this._dispatchEvent('scroll-ended');
         }
@@ -1121,7 +1129,7 @@ let ScrollView = cc.Class({
         this._touchMovePreviousTimestamp = getTimeInMilliseconds();
         this._touchMoveDisplacements.length = 0;
         this._touchMoveTimeDeltas.length = 0;
-
+        /** 滚动条触摸开始事件 */
         this._onScrollBarTouchBegan();
     },
 

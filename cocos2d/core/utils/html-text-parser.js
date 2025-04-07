@@ -29,6 +29,8 @@ var imageAttrReg = /(\s)*src(\s)*=|(\s)*height(\s)*=|(\s)*width(\s)*=|(\s)*align
 /**
  * A utils class for parsing HTML texts. The parsed results will be an object array.
  */
+
+/**html 解析器 */
 var HtmlTextParser = function() {
     this._parsedObject = {};
     this._specialSymbolArray = [];

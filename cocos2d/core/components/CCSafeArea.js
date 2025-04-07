@@ -92,6 +92,7 @@ var SafeArea = cc.Class({
         //
         widget.isAlignTop = widget.isAlignBottom = widget.isAlignLeft = widget.isAlignRight = true;
         let screenWidth = cc.winSize.width, screenHeight = cc.winSize.height;
+        /**获取安全区域 */
         let safeArea = cc.sys.getSafeAreaRect();
         widget.top = screenHeight - safeArea.y - safeArea.height;
         widget.bottom = safeArea.y;

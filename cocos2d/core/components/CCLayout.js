@@ -485,16 +485,17 @@ var Layout = cc.Class({
         }
     },
 
+    /**添加子节点 注册字节点事件 */
     _childAdded: function (child) {
         child.on(NodeEvent.SCALE_CHANGED, this._doScaleDirty, this);
         child.on(NodeEvent.SIZE_CHANGED, this._doLayoutDirty, this);
         child.on(NodeEvent.POSITION_CHANGED, this._doLayoutDirty, this);
         child.on(NodeEvent.ANCHOR_CHANGED, this._doLayoutDirty, this);
         child.on('active-in-hierarchy-changed', this._doLayoutDirty, this);
-
         this._doLayoutDirty();
     },
 
+    /**移除子节点 注销子节点事件 */
     _childRemoved: function (child) {
         child.off(NodeEvent.SCALE_CHANGED, this._doScaleDirty, this);
         child.off(NodeEvent.SIZE_CHANGED, this._doLayoutDirty, this);

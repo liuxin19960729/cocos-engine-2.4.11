@@ -727,10 +727,12 @@ let RichText = cc.Class({
             cc.warnID(4400);
         }
     },
-
+    
+    
+    /**update RichText*/
     _updateRichText () {
         if (!this.enabledInHierarchy) return;
-
+        
         let newTextArray = _htmlTextParser.parse(this.string);
         if (!this._needsUpdateTextLayout(newTextArray)) {
             this._textArray = newTextArray;
