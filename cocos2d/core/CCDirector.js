@@ -888,7 +888,7 @@ cc.Director.prototype = {
                 // Call start for new added components
                 this._compScheduler.startPhase();
 
-                // Update for components
+                // Update for components 组件update对象
                 this._compScheduler.updatePhase(deltaTime);
                 // Engine update with scheduler  动作系统  动画系统  物理系统  碰撞系统 ....
                 this._scheduler.update(deltaTime);

@@ -152,7 +152,7 @@ HashTimerEntry.put = function (entry) {
  * Light weight timer
  * @extends cc.Class
  */
-function CallbackTimer () {
+function CallbackTimer() {
     this._lock = false;
     this._scheduler = null;
     this._elapsed = -1;
@@ -186,11 +186,11 @@ proto.initWithCallback = function (scheduler, callback, target, seconds, repeat,
 /**
  * @return {Number} returns interval of timer
  */
-proto.getInterval = function(){return this._interval;};
+proto.getInterval = function () { return this._interval; };
 /**
  * @param {Number} interval set interval in seconds
  */
-proto.setInterval = function(interval){this._interval = interval;};
+proto.setInterval = function (interval) { this._interval = interval; };
 
 /**
  * triggers the timer
@@ -231,7 +231,7 @@ proto.update = function (dt) {
     }
 };
 
-proto.getCallback = function(){
+proto.getCallback = function () {
     return this._callback;
 };
 
@@ -289,7 +289,9 @@ cc.Scheduler = function () {
     this._hashForTimers = js.createMap(true);   // Used for "selectors with interval"
     this._currentTarget = null;
     this._currentTargetSalvaged = false;
-    this._updateHashLocked = false; // If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
+    // If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
+    // 如果为true unschedule 不会从哈希中删除任何东西。元素只会被标记为删除。
+    this._updateHashLocked = false;
 
     this._arrayForTimers = [];  // Speed up indexing
     //this._arrayForUpdates = [];   // Speed up indexing
@@ -315,7 +317,7 @@ cc.Scheduler.prototype = {
         var targetId = entry.target._id;
         var self = this, element = self._hashForUpdates[targetId];
         if (element) {
-            // Remove list entry from list
+            // Remove list entry from list 从List 里面删除element 
             var list = element.list, listEntry = element.entry;
             for (var i = 0, l = list.length; i < l; i++) {
                 if (list[i] === listEntry) {
@@ -323,15 +325,16 @@ cc.Scheduler.prototype = {
                     break;
                 }
             }
-
+            // element 从map 删除
             delete self._hashForUpdates[targetId];
+            /**将 listEntry 和 element 放回放回对象池子里面*/
             ListEntry.put(listEntry);
             HashUpdateEntry.put(element);
         }
     },
 
     _priorityIn: function (ppList, listElement, priority) {
-        for (var i = 0; i < ppList.length; i++){
+        for (var i = 0; i < ppList.length; i++) {
             if (priority < ppList[i].priority) {
                 ppList.splice(i, 0, listElement);
                 return;
@@ -401,25 +404,26 @@ cc.Scheduler.prototype = {
      * @param {Number} dt delta time
      */
     update: function (dt) {
+        /**_updateHashLocked 状态变为锁定状态 */
         this._updateHashLocked = true;
-        if(this._timeScale !== 1)
+        if (this._timeScale !== 1)
             dt *= this._timeScale;
 
         var i, list, len, entry;
-
-        for(i=0,list=this._updatesNegList, len = list.length; i<len; i++){
+        /**调度target 对象 */
+        for (i = 0, list = this._updatesNegList, len = list.length; i < len; i++) {
             entry = list[i];
             if (!entry.paused && !entry.markedForDeletion)
                 entry.target.update(dt);
         }
 
-        for(i=0, list=this._updates0List, len=list.length; i<len; i++){
+        for (i = 0, list = this._updates0List, len = list.length; i < len; i++) {
             entry = list[i];
             if (!entry.paused && !entry.markedForDeletion)
                 entry.target.update(dt);
         }
 
-        for(i=0, list=this._updatesPosList, len=list.length; i<len; i++){
+        for (i = 0, list = this._updatesPosList, len = list.length; i < len; i++) {
             entry = list[i];
             if (!entry.paused && !entry.markedForDeletion)
                 entry.target.update(dt);
@@ -427,14 +431,14 @@ cc.Scheduler.prototype = {
 
         // Iterate over all the custom selectors
         var elt, arr = this._arrayForTimers;
-        for(i=0; i<arr.length; i++){
+        for (i = 0; i < arr.length; i++) {
             elt = arr[i];
             this._currentTarget = elt;
             this._currentTargetSalvaged = false;
 
-            if (!elt.paused){
+            if (!elt.paused) {
                 // The 'timers' array may change while inside this loop
-                for (elt.timerIndex = 0; elt.timerIndex < elt.timers.length; ++(elt.timerIndex)){
+                for (elt.timerIndex = 0; elt.timerIndex < elt.timers.length; ++(elt.timerIndex)) {
                     elt.currentTimer = elt.timers[elt.timerIndex];
                     elt.currentTimerSalvaged = false;
 
@@ -449,18 +453,11 @@ cc.Scheduler.prototype = {
                 --i;
             }
         }
-
+        
         // delete all updates that are marked for deletion
         // updates with priority < 0
-        for(i=0,list=this._updatesNegList; i<list.length; ){
-            entry = list[i];
-            if(entry.markedForDeletion)
-                this._removeUpdateFromHash(entry);
-            else
-                i++;
-        }
-
-        for(i=0, list=this._updates0List; i<list.length; ){
+        // 清除 markedForDeletion 为 True 的调度对象
+        for (i = 0, list = this._updatesNegList; i < list.length;) {
             entry = list[i];
             if (entry.markedForDeletion)
                 this._removeUpdateFromHash(entry);
@@ -468,7 +465,7 @@ cc.Scheduler.prototype = {
                 i++;
         }
 
-        for(i=0, list=this._updatesPosList; i<list.length; ){
+        for (i = 0, list = this._updates0List; i < list.length;) {
             entry = list[i];
             if (entry.markedForDeletion)
                 this._removeUpdateFromHash(entry);
@@ -476,6 +473,15 @@ cc.Scheduler.prototype = {
                 i++;
         }
 
+    
+        for (i = 0, list = this._updatesPosList; i < list.length;) {
+            entry = list[i];
+            if (entry.markedForDeletion)
+                this._removeUpdateFromHash(entry);
+            else
+                i++;
+        }
+        /**_updateHashLocked 释放锁定*/
         this._updateHashLocked = false;
         this._currentTarget = null;
     },
@@ -551,21 +557,24 @@ cc.Scheduler.prototype = {
 
         var timer, i;
         if (element.timers == null) {
+            /**target->target._id->element->timers 一个target 可以对应多个timer */
             element.timers = [];
         }
         else {
             for (i = 0; i < element.timers.length; ++i) {
                 timer = element.timers[i];
                 if (timer && callback === timer._callback) {
+                    //note: 同一个函数不允许注册两次
                     cc.logID(1507, timer.getInterval(), interval);
                     timer._interval = interval;
                     return;
                 }
             }
         }
-
+        /**从节点池中获取一个Timer对象*/
         timer = CallbackTimer.get();
         timer.initWithCallback(this, callback, target, interval, repeat, delay);
+        //将Timer 对象压度timer 队列
         element.timers.push(timer);
 
         if (this._currentTarget === element && this._currentTargetSalvaged) {
@@ -586,7 +595,7 @@ cc.Scheduler.prototype = {
      * @param {Number} priority
      * @param {Boolean} paused
      */
-    scheduleUpdate: function(target, priority, paused) {
+    scheduleUpdate: function (target, priority, paused) {
         var targetId = target._id;
         if (!targetId) {
             if (target.__instanceId) {
@@ -598,25 +607,29 @@ cc.Scheduler.prototype = {
             }
         }
         var hashElement = this._hashForUpdates[targetId];
-        if (hashElement && hashElement.entry){
-            // check if priority has changed
-            if (hashElement.entry.priority !== priority){
-                if (this._updateHashLocked){
+        // 已经注册在调度器里面
+        if (hashElement && hashElement.entry) {
+            // check if priority has changed  优先级改变  
+            if (hashElement.entry.priority !== priority) {
+                if (this._updateHashLocked) {// true 不能直接删除 只能做一个删除的标记
+                    // note:  _updateHashLocked 期间 不允许修改 priority
                     cc.logID(1506);
                     hashElement.entry.markedForDeletion = false;
                     hashElement.entry.paused = paused;
                     return;
-                }else{
-                    // will be added again outside if (hashElement).
+                } else {
+                    // will be added again outside if (hashElement). 取消Update 定时器
                     this.unscheduleUpdate(target);
                 }
-            }else{
+            } else {
+                // 优先级没有改变 可能改变了 paused 
                 hashElement.entry.markedForDeletion = false;
                 hashElement.entry.paused = paused;
                 return;
             }
         }
 
+        /**从对象池子里面获取 一个 listEntry 对象并 把 tartget priority paused  markedForDeletion 相关数据*/
         var listElement = ListEntry.get(target, priority, paused, false);
         var ppList;
 
@@ -624,14 +637,17 @@ cc.Scheduler.prototype = {
         // is an special list for updates with priority 0
         if (priority === 0) {
             ppList = this._updates0List;
+            // 讲  listElement push 到 ppList 里面
             this._appendIn(ppList, listElement);
         }
         else {
+            /**根据 优先级上对象压入到 对应的队列里面*/
             ppList = priority < 0 ? this._updatesNegList : this._updatesPosList;
             this._priorityIn(ppList, listElement, priority);
         }
 
         //update hash entry for quick access
+        //从 HashUpdateEntry 对象池里边获取一个 HashUpdateEntry 对象并把 ppList listElement target targetId 赋值给它
         this._hashForUpdates[targetId] = HashUpdateEntry.get(ppList, listElement, target, null);
     },
 
@@ -666,7 +682,7 @@ cc.Scheduler.prototype = {
         var self = this, element = self._hashForTimers[targetId];
         if (element) {
             var timers = element.timers;
-            for(var i = 0, li = timers.length; i < li; i++){
+            for (var i = 0, li = timers.length; i < li; i++) {
                 var timer = timers[i];
                 if (callback === timer._callback) {
                     if ((timer === element.currentTimer) && (!element.currentTimerSalvaged)) {
@@ -714,6 +730,7 @@ cc.Scheduler.prototype = {
 
         var element = this._hashForUpdates[targetId];
         if (element) {
+            // _updateHashLocked为true 设置为删除标记
             if (this._updateHashLocked) {
                 element.entry.markedForDeletion = true;
             } else {
@@ -732,7 +749,7 @@ cc.Scheduler.prototype = {
      */
     unscheduleAllForTarget: function (target) {
         // explicit nullptr handling
-        if (!target){
+        if (!target) {
             return;
         }
         var targetId = target._id;
@@ -750,7 +767,7 @@ cc.Scheduler.prototype = {
         var element = this._hashForTimers[targetId];
         if (element) {
             var timers = element.timers;
-            if (timers.indexOf(element.currentTimer) > -1 && 
+            if (timers.indexOf(element.currentTimer) > -1 &&
                 (!element.currentTimerSalvaged)) {
                 element.currentTimerSalvaged = true;
             }
@@ -759,9 +776,9 @@ cc.Scheduler.prototype = {
             }
             timers.length = 0;
 
-            if (this._currentTarget === element){
+            if (this._currentTarget === element) {
                 this._currentTargetSalvaged = true;
-            }else{
+            } else {
                 this._removeHashElement(element);
             }
         }
@@ -779,7 +796,7 @@ cc.Scheduler.prototype = {
      * 不要调用此函数，除非你确定你在做什么。
      * @method unscheduleAll
      */
-    unscheduleAll: function(){
+    unscheduleAll: function () {
         this.unscheduleAllWithMinPriority(cc.Scheduler.PRIORITY_SYSTEM);
     },
 
@@ -794,10 +811,10 @@ cc.Scheduler.prototype = {
      * @param {Number} minPriority The minimum priority of selector to be unscheduled. Which means, all selectors which
      *        priority is higher than minPriority will be unscheduled.
      */
-    unscheduleAllWithMinPriority: function(minPriority){
+    unscheduleAllWithMinPriority: function (minPriority) {
         // Custom Selectors
         var i, element, arr = this._arrayForTimers;
-        for(i=arr.length-1; i>=0; i--){
+        for (i = arr.length - 1; i >= 0; i--) {
             element = arr[i];
             this.unscheduleAllForTarget(element.target);
         }
@@ -805,19 +822,19 @@ cc.Scheduler.prototype = {
         // Updates selectors
         var entry;
         var temp_length = 0;
-        if(minPriority < 0){
-            for(i=0; i<this._updatesNegList.length; ){
+        if (minPriority < 0) {
+            for (i = 0; i < this._updatesNegList.length;) {
                 temp_length = this._updatesNegList.length;
                 entry = this._updatesNegList[i];
-                if(entry && entry.priority >= minPriority)
+                if (entry && entry.priority >= minPriority)
                     this.unscheduleUpdate(entry.target);
                 if (temp_length == this._updatesNegList.length)
                     i++;
             }
         }
 
-        if(minPriority <= 0){
-            for(i=0; i<this._updates0List.length; ){
+        if (minPriority <= 0) {
+            for (i = 0; i < this._updates0List.length;) {
                 temp_length = this._updates0List.length;
                 entry = this._updates0List[i];
                 if (entry)
@@ -827,10 +844,10 @@ cc.Scheduler.prototype = {
             }
         }
 
-        for(i=0; i<this._updatesPosList.length; ){
+        for (i = 0; i < this._updatesPosList.length;) {
             temp_length = this._updatesPosList.length;
             entry = this._updatesPosList[i];
-            if(entry && entry.priority >= minPriority)
+            if (entry && entry.priority >= minPriority)
                 this.unscheduleUpdate(entry.target);
             if (temp_length == this._updatesPosList.length)
                 i++;
@@ -845,7 +862,7 @@ cc.Scheduler.prototype = {
      * @param {Object} target The target of the callback.
      * @return {Boolean} True if the specified callback is invoked, false if not.
      */
-    isScheduled: function(callback, target){
+    isScheduled: function (callback, target) {
         //key, target
         //selector, target
         cc.assertID(callback, 1508);
@@ -860,22 +877,22 @@ cc.Scheduler.prototype = {
                 cc.errorID(1510);
             }
         }
-        
+
         var element = this._hashForTimers[targetId];
 
         if (!element) {
             return false;
         }
 
-        if (element.timers == null){
+        if (element.timers == null) {
             return false;
         }
         else {
             var timers = element.timers;
             for (var i = 0; i < timers.length; ++i) {
-                var timer =  timers[i];
+                var timer = timers[i];
 
-                if (callback === timer._callback){
+                if (callback === timer._callback) {
                     return true;
                 }
             }
@@ -912,7 +929,7 @@ cc.Scheduler.prototype = {
         var self = this, element, locArrayForTimers = self._arrayForTimers;
         var i, li;
         // Custom Selectors
-        for(i = 0, li = locArrayForTimers.length; i < li; i++){
+        for (i = 0, li = locArrayForTimers.length; i < li; i++) {
             element = locArrayForTimers[i];
             if (element) {
                 element.paused = true;
@@ -921,11 +938,11 @@ cc.Scheduler.prototype = {
         }
 
         var entry;
-        if(minPriority < 0){
-            for(i=0; i<this._updatesNegList.length; i++){
+        if (minPriority < 0) {
+            for (i = 0; i < this._updatesNegList.length; i++) {
                 entry = this._updatesNegList[i];
                 if (entry) {
-                    if(entry.priority >= minPriority){
+                    if (entry.priority >= minPriority) {
                         entry.paused = true;
                         idsWithSelectors.push(entry.target);
                     }
@@ -933,8 +950,8 @@ cc.Scheduler.prototype = {
             }
         }
 
-        if(minPriority <= 0){
-            for(i=0; i<this._updates0List.length; i++){
+        if (minPriority <= 0) {
+            for (i = 0; i < this._updates0List.length; i++) {
                 entry = this._updates0List[i];
                 if (entry) {
                     entry.paused = true;
@@ -943,10 +960,10 @@ cc.Scheduler.prototype = {
             }
         }
 
-        for(i=0; i<this._updatesPosList.length; i++){
+        for (i = 0; i < this._updatesPosList.length; i++) {
             entry = this._updatesPosList[i];
             if (entry) {
-                if(entry.priority >= minPriority){
+                if (entry.priority >= minPriority) {
                     entry.paused = true;
                     idsWithSelectors.push(entry.target);
                 }
@@ -1001,7 +1018,7 @@ cc.Scheduler.prototype = {
         }
 
         //customer selectors
-        var self = this, 
+        var self = this,
             element = self._hashForTimers[targetId];
         if (element) {
             element.paused = true;
