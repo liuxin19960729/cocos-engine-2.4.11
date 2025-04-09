@@ -328,16 +328,18 @@ var game = {
      * @method restart
      */
     restart: function () {
+        // cc.Director.EVENT_AFTER_DRAW 主循环找到最后触发重新开始游戏的逻辑
         cc.director.once(cc.Director.EVENT_AFTER_DRAW, function () {
+            // 清除常驻节点
             for (var id in game._persistRootNodes) {
                 game.removePersistRootNode(game._persistRootNodes[id]);
             }
 
-            // Clear scene
+            // Clear scene 清除场景所以节点和组件
             cc.director.getScene().destroy();
             cc.Object._deferredDestroy();
 
-            // Clean up audio 写在所有音效
+            // Clean up audio 卸载所有音效
             if (cc.audioEngine) {
                 cc.audioEngine.uncacheAll();
             }
@@ -345,8 +347,10 @@ var game = {
             cc.director.reset();
 
             game.pause();
+            /**加载内置必要的资源 然后启动游戏 例如  effect material ...s */
             cc.assetManager.builtins.init(() => {
                 game.onStart();
+                // 发送从新启动事件
                 game.emit(game.EVENT_RESTART);
             });
         });
@@ -371,9 +375,10 @@ var game = {
         this._initRenderer();
 
         if (!CC_EDITOR) {
+            /**切入后台 进入前台等事件注册 */
             this._initEvents();
         }
-
+        // 引擎已经初始化完全
         this.emit(this.EVENT_ENGINE_INITED);
     },
 
@@ -386,6 +391,7 @@ var game = {
         }
     },
 
+    /**准备结束 */
     _prepareFinished(cb) {
         // Init engine
         this._initEngine();
@@ -395,7 +401,7 @@ var game = {
             console.log('Cocos Creator v' + cc.ENGINE_VERSION);
             this._prepared = true;
             this._runMainLoop();
-
+            /**游戏初始化完成 */
             this.emit(this.EVENT_GAME_INITED);
 
             if (cb) cb();
@@ -491,8 +497,11 @@ var game = {
      * @param {Function} onStart - function to be executed after game initialized
      */
     run: function (config, onStart) {
+        /**初始化配置 */
         this._initConfig(config);
+        /**注册onStart 函数 */
         this.onStart = onStart;
+        /**引擎启动前准备 */
         this.prepare(game.onStart && game.onStart.bind(game));
     },
 
