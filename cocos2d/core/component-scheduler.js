@@ -402,7 +402,9 @@ var ComponentScheduler = cc.Class({
         }
         enableInEditor(comp);
     } : function (comp, invoker) {
+        /**onEnable 还没有调用 */
         if (!(comp._objFlags & IsOnEnableCalled)) {
+            // comp 实现了 onEnable 函数
             if (comp.onEnable) {
                 if (invoker) {
                     invoker.add(comp);
@@ -472,6 +474,7 @@ var ComponentScheduler = cc.Class({
         }
     },
 
+    /**comp start 阶段 */
     startPhase () {
         // Start of this frame
         this._updating = true;

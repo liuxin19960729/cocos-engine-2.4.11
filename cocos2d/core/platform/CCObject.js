@@ -199,6 +199,7 @@ function deferredDestroy() {
     for (var i = 0; i < deleteCount; ++i) {
         var obj = objectsToDestroy[i];
         if (!(obj._objFlags & Destroyed)) {
+            //立即销毁
             obj._destroyImmediate();
         }
     }

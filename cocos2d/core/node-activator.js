@@ -270,6 +270,7 @@ var NodeActivator = cc.Class({
         node.emit('active-in-hierarchy-changed', node);
     },
 
+    /**激活组件 */
     activateComp: CC_EDITOR ? function (comp, preloadInvoker, onLoadInvoker, onEnableInvoker) {
         if (!cc.isValid(comp, true)) {
             // destroyed before activating
@@ -315,6 +316,7 @@ var NodeActivator = cc.Class({
             // destroyed before activating
             return;
         }
+        
         if (!(comp._objFlags & IsPreloadStarted)) {
             comp._objFlags |= IsPreloadStarted;
             if (comp.__preload) {
@@ -326,8 +328,10 @@ var NodeActivator = cc.Class({
                 }
             }
         }
+        /**comp 没有调用onLoad */
         if (!(comp._objFlags & IsOnLoadStarted)) {
             comp._objFlags |= IsOnLoadStarted;
+            /**comp 是否实现onLoad函数 */
             if (comp.onLoad) {
                 if (onLoadInvoker) {
                     onLoadInvoker.add(comp);
@@ -341,6 +345,7 @@ var NodeActivator = cc.Class({
                 comp._objFlags |= IsOnLoadCalled;
             }
         }
+        /**是否激活 */
         if (comp._enabled) {
             var deactivatedOnLoading = !comp.node._activeInHierarchy;
             if (deactivatedOnLoading) {

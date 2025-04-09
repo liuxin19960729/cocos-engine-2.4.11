@@ -173,6 +173,7 @@ cc.Director.prototype = {
      */
     sharedInit: function () {
         this._compScheduler = new ComponentScheduler();
+        // 节点激活器
         this._nodeActivator = new NodeActivator();
 
         // Event manager
@@ -884,7 +885,7 @@ cc.Director.prototype = {
             if (!this._paused) {
                 // before update
                 this.emit(cc.Director.EVENT_BEFORE_UPDATE, deltaTime);
-
+                //调用新添加到节点component 并且 node 在场景中为激活状态
                 // Call start for new added components
                 this._compScheduler.startPhase();
 
@@ -900,6 +901,7 @@ cc.Director.prototype = {
                 this.emit(cc.Director.EVENT_AFTER_UPDATE, deltaTime);
 
                 // Destroy entities that have been removed recently
+                // 销毁当前倍移除ojbects 对象
                 Obj._deferredDestroy();
             }
 

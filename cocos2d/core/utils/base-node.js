@@ -951,13 +951,14 @@ var BaseNode = cc.Class({
         //}
 
         //
-
+        // new Component 对象
         var component = new constructor();
         component.node = this;
         this._components.push(component);
         if ((CC_EDITOR || CC_TEST) && cc.engine && (this._id in cc.engine.attachedObjsForEditor)) {
             cc.engine.attachedObjsForEditor[component._id] = component;
         }
+        /** this._activeInHierarchy 当前节点在场景中为激活状态 */
         if (this._activeInHierarchy) {
             cc.director._nodeActivator.activateComp(component);
         }

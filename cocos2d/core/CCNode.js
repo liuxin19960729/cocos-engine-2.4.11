@@ -1693,6 +1693,7 @@ let NodeDefines = {
         var destroyByParent = this._onPreDestroyBase();
 
         // Actions
+        // note:会自动将target 从action 中移除
         if (ActionManagerExist) {
             cc.director.getActionManager().removeAllActionsFromTarget(this);
         }
@@ -3693,6 +3694,7 @@ let NodeDefines = {
      * @method cleanup
      * @example
      * node.cleanup();
+     * note: removeChild cleanup true  removeFramParnet true ... 会调用到 cleanup()
      */
     cleanup() {
         // actions
