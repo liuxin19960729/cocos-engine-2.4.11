@@ -56,5 +56,5 @@ function onErrorMessageHandler (info) {
     node.parent = root;
     cc.director.pause();
 }
-
+// 错误异常监听接口
 wx.onError && wx.onError(onErrorMessageHandler);
