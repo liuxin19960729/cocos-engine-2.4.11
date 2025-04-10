@@ -28,15 +28,16 @@ var outOfStorageRegExp = /size.*limit.*exceeded/;
 var fsUtils = {
 
     fs,
-
+    // 是否超出存储限制
     isOutOfStorage (errMsg) {
         return outOfStorageRegExp.test(errMsg);
     },
-
+    // 用后数据地址
     getUserDataPath () {
         return tt.env.USER_DATA_PATH;
     },
 
+    // fs 是否有效
     checkFsValid () {
         if (!fs) {
             console.warn('can not get the file system!');
@@ -44,7 +45,7 @@ var fsUtils = {
         }
         return true;
     },
-
+    /**删除文件 */
     deleteFile (filePath, onComplete) {
         fs.unlink({
             filePath: filePath,
@@ -57,7 +58,7 @@ var fsUtils = {
             }
         });
     },
-
+    /**将文件下载到磁盘的某一个位置 */
     downloadFile (remoteUrl, filePath, header, onProgress, onComplete) {
         var options = {
             url: remoteUrl,
@@ -83,7 +84,7 @@ var fsUtils = {
         var task = tt.downloadFile(options);
         onProgress && task.onProgressUpdate(onProgress);
     },
-
+    /**保存文件 */
     saveFile (srcPath, destPath, onComplete) {
         tt.saveFile({
             tempFilePath: srcPath,
