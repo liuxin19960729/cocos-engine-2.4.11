@@ -31,7 +31,7 @@ cc.game.restart = function () {
     
     __restartVM();
 };
-
+// js 异常错误监听十事件
 jsb.onError(function (location, message, stack) {
     console.error(location, message, stack);
 });
