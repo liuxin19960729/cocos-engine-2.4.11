@@ -24,7 +24,7 @@
  ****************************************************************************/
 const Cache = require('./cache');
 const releaseManager = require('./releaseManager');
-const { BuiltinBundleName } = require('./shared'); 
+const { BuiltinBundleName } = require('./shared');
 
 /**
  * @module cc.AssetManager
@@ -39,11 +39,11 @@ const { BuiltinBundleName } = require('./shared');
  * @class Builtins
  */
 var builtins = {
-    
+
     _assets: new Cache({ material: new Cache(), effect: new Cache() }), // builtin assets
 
-    _loadBuiltins (name, cb) {
-        let dirname = name  + 's';
+    _loadBuiltins(name, cb) {
+        let dirname = name + 's';
         let builtin = this._assets.get(name);
         return cc.assetManager.internal.loadDir(dirname, null, null, (err, assets) => {
             if (err) {
@@ -73,7 +73,7 @@ var builtins = {
      * @typescript
      * init (cb: () => void): void
      */
-    init (cb) {
+    init(cb) {
         this.clear();
         if (cc.game.renderType === cc.game.RENDER_TYPE_CANVAS || !cc.assetManager.bundles.has(BuiltinBundleName.INTERNAL)) {
             return cb && cb();
@@ -92,7 +92,7 @@ var builtins = {
      * 通过特定的类型和名称获取内建资源
      * 
      * @method getBuiltin
-     * @param {string} [type] - The type of asset, such as `effect`
+     * @param {string} [type] - The type of asset, such as `effect` or `material`
      * @param {string} [name] - The name of asset, such as `phong`
      * @return {Asset|Cache} Builtin-assets
      * 
@@ -102,7 +102,7 @@ var builtins = {
      * @typescript
      * getBuiltin(type?: string, name?: string): cc.Asset | Cache<cc.Asset>
      */
-    getBuiltin (type, name) {
+    getBuiltin(type, name) {
         if (arguments.length === 0) return this._assets;
         else if (arguments.length === 1) return this._assets.get(type);
         else return this._assets.get(type).get(name);
@@ -120,7 +120,7 @@ var builtins = {
      * @typescript
      * clear(): void
      */
-    clear () {
+    clear() {
         this._assets.forEach(function (assets) {
             assets.forEach(function (asset) {
                 releaseManager.tryRelease(asset, true);

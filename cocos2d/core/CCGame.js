@@ -347,7 +347,10 @@ var game = {
             cc.director.reset();
 
             game.pause();
-            /**加载内置必要的资源 然后启动游戏 例如  effect material ...s */
+            /**
+             * 加载内置必要的资源 然后启动游戏 例如  effect material ...s
+             * note: 每一个资源都 addRef
+             */
             cc.assetManager.builtins.init(() => {
                 game.onStart();
                 // 发送从新启动事件

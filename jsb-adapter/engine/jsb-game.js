@@ -28,10 +28,10 @@ cc.game.restart = function () {
     cc.director.getScene().destroy();
     cc.Object._deferredDestroy();
     cc.game.pause();
-    
+
     __restartVM();
 };
-// js 异常错误监听十事件
+// js 异常错误监听
 jsb.onError(function (location, message, stack) {
     console.error(location, message, stack);
 });
