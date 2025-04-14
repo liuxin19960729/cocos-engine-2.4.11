@@ -189,12 +189,14 @@ var PhysicsManager = cc.Class({
             }
 
             while (this._accumulator > FIXED_TIME_STEP) {
+                // 步进世界
                 world.Step(FIXED_TIME_STEP, velocityIterations, positionIterations);
                 this._accumulator -= FIXED_TIME_STEP;
             }
         }
         else {
             var timeStep = 1/cc.game.config['frameRate'];
+            // 步进世界
             world.Step(timeStep, velocityIterations, positionIterations);
         }
 
@@ -545,6 +547,7 @@ cc.js.getset(PhysicsManager.prototype, 'enabled',
         if (CC_EDITOR) return;
         
         if (value && !this._world) {
+            //  new b2.Vec2(0, -10) 表示对是重力
             var world = new b2.World( new b2.Vec2(0, -10) );
             world.SetAllowSleeping(true);
 
