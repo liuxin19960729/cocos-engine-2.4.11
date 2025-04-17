@@ -136,10 +136,10 @@ var _downloading = new Cache();
 var _queue = [];
 var _queueDirty = false;
 
-// the number of loading thread
+// the number of loading thread 正在加载的线程数量
 var _totalNum = 0;
 
-// the number of request that launched in this period
+// the number of request that launched in this period 在此期间发起的请求数量
 var _totalNumThisPeriod = 0;
 
 // last time, if now - lastTime > period, refresh _totalNumThisPeriod.
@@ -161,8 +161,15 @@ var updateTime = function () {
 // handle the rest request in next period
 var handleQueue = function (maxConcurrency, maxRequestsPerFrame) {
     _checkNextPeriod = false;
+    // 检查是否到达下一帧,如果到达下一帧并返回重置 _totalNumThisPeriod 为 0
     updateTime();
+    /**
+     * _totalNum 总共有多少个线程在加载资源
+     * _totalNumThisPeriod 在一个时间段内发起的请求数量
+     * _queue.length > 0 请求队列有请求
+     */
     while (_queue.length > 0 && _totalNum < maxConcurrency && _totalNumThisPeriod < maxRequestsPerFrame) {
+        // 队列是否需要排序
         if (_queueDirty) {
             _queue.sort(function (a, b) {
                 return a.priority - b.priority;
@@ -173,11 +180,14 @@ var handleQueue = function (maxConcurrency, maxRequestsPerFrame) {
         if (!nextOne) {
             break;
         }
+        // 请求总并发数量 ++
         _totalNum++;
+        // 当前帧请求++
         _totalNumThisPeriod++;
         nextOne.invoke();
     }
 
+    // 下一帧 检查是否可以在请求
     if (_queue.length > 0 && _totalNum < maxConcurrency) {
         callInNextTick(handleQueue, maxConcurrency, maxRequestsPerFrame);
         _checkNextPeriod = true;
@@ -454,9 +464,11 @@ var downloader = {
         let self = this;
         // if it is downloaded, don't download again
         let file, downloadCallbacks;
+        // 文件已经被下载直接取出返回
         if (file = files.get(id)) {
             onComplete(null, file);
         }
+        // 文件正在在下载,将会掉保存下来
         else if (downloadCallbacks = _downloading.get(id)) {
             downloadCallbacks.push(onComplete);
             for (let i = 0, l = _queue.length; i < l; i++) {
@@ -492,6 +504,7 @@ var downloader = {
                         // when finish downloading, update _totalNum
                         _totalNum--;
                         if (!_checkNextPeriod && _queue.length > 0) {
+                            //maxRequestsPerFrame   每一帧最大请求数
                             callInNextTick(handleQueue, maxConcurrency, maxRequestsPerFrame);
                             _checkNextPeriod = true;
                         }
@@ -518,7 +531,9 @@ var downloader = {
 
             // when retry finished, invoke callbacks
             function finale(err, result) {
+                // 加入文件到缓存
                 if (!err) files.add(id, result);
+                // 正在下载的回调函数
                 var callbacks = _downloading.remove(id);
                 for (let i = 0, l = callbacks.length; i < l; i++) {
                     callbacks[i](err, result);
