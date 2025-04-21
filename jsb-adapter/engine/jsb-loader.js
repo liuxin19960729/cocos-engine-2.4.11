@@ -95,8 +95,10 @@ function download(url, func, options, onFileProgress, onComplete) {
         }
         downloadFile(url, `${cacheManager.cacheDir}/${storagePath}`, options.header, onFileProgress, function (err, path) {
             if (err) {
+                //failureRecord 失败记录
                 if (failureRecord) {
                     failureRecord.retryCount++;
+                    // 超过最大重试次数，删除记录
                     if (failureRecord.retryCount >= maxRetryCountFromBreakpoint) {
                         delete failureMap[url];
                     }
@@ -145,6 +147,7 @@ function doNothing(content, options, onComplete) {
     onComplete(null, content);
 }
 
+/**下载资源 */
 function downloadAsset(url, options, onComplete) {
     download(url, doNothing, options, options.onFileProgress, onComplete);
 }
