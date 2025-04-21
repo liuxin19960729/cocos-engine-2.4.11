@@ -29,27 +29,27 @@ const { getDepends, cache, gatherAsset, setProperties, forEach, clear, checkCirc
 const { assets, files, parsed, pipeline } = require('./shared');
 const Task = require('./task');
 
-function load (task, done) {
+function load(task, done) {
 
     let firstTask = false;
     if (!task.progress) {
         task.progress = { finish: 0, total: task.input.length, canInvoke: true };
         firstTask = true;
     }
-    
+
     var options = task.options, progress = task.progress;
 
     options.__exclude__ = options.__exclude__ || Object.create(null);
 
     task.output = [];
-    
+
     forEach(task.input, function (item, cb) {
 
-        let subTask = Task.create({ 
-            input: item, 
-            onProgress: task.onProgress, 
-            options, 
-            progress, 
+        let subTask = Task.create({
+            input: item,
+            onProgress: task.onProgress,
+            options,
+            progress,
             onComplete: function (err, item) {
                 if (err && !task.isFinish) {
                     if (!cc.assetManager.force || firstTask) {
@@ -88,7 +88,7 @@ function load (task, done) {
 
 var loadOneAssetPipeline = new Pipeline('loadOneAsset', [
 
-    function fetch (task, done) {
+    function fetch(task, done) {
         var item = task.output = task.input;
         var { options, isNative, uuid, file } = item;
         var { reload } = options;
@@ -101,7 +101,7 @@ var loadOneAssetPipeline = new Pipeline('loadOneAsset', [
         });
     },
 
-    function parse (task, done) {
+    function parse(task, done) {
 
         var item = task.output = task.input, progress = task.progress, exclude = task.options.__exclude__;
         var { id, file, options } = item;
@@ -111,6 +111,7 @@ var loadOneAssetPipeline = new Pipeline('loadOneAsset', [
                 if (err) return done(err);
                 item.content = asset;
                 progress.canInvoke && task.dispatch('progress', ++progress.finish, progress.total, item);
+                // 删除native 资源换
                 files.remove(id);
                 parsed.remove(id);
                 done();
@@ -119,11 +120,11 @@ var loadOneAssetPipeline = new Pipeline('loadOneAsset', [
         else {
             var { uuid } = item;
             if (uuid in exclude) {
-    
+
                 var { finish, content, err, callbacks } = exclude[uuid];
                 progress.canInvoke && task.dispatch('progress', ++progress.finish, progress.total, item);
-    
-                if (finish || checkCircleReference(uuid, uuid, exclude) ) {
+
+                if (finish || checkCircleReference(uuid, uuid, exclude)) {
                     content && content.addRef && content.addRef();
                     item.content = content;
                     done(err);
@@ -156,7 +157,7 @@ var loadOneAssetPipeline = new Pipeline('loadOneAsset', [
     }
 ]);
 
-function loadDepends (task, asset, done, init) {
+function loadDepends(task, asset, done, init) {
 
     var item = task.input, progress = task.progress;
     var { uuid, id, options, config } = item;
@@ -170,12 +171,12 @@ function loadDepends (task, asset, done, init) {
 
     var repeatItem = task.options.__exclude__[uuid] = { content: asset, finish: false, callbacks: [{ done, item }] };
 
-    let subTask = Task.create({ 
-        input: depends, 
-        options: task.options, 
-        onProgress: task.onProgress, 
-        onError: Task.prototype.recycle, 
-        progress, 
+    let subTask = Task.create({
+        input: depends,
+        options: task.options,
+        onProgress: task.onProgress,
+        onError: Task.prototype.recycle,
+        progress,
         onComplete: function (err) {
             asset.decRef && asset.decRef(false);
             asset.__asyncLoadAssets__ = __asyncLoadAssets__;
@@ -218,11 +219,11 @@ function loadDepends (task, asset, done, init) {
                     }
                     files.remove(id);
                     parsed.remove(id);
-                    cache(uuid, asset, cacheAsset !== undefined ? cacheAsset : cc.assetManager.cacheAsset); 
+                    cache(uuid, asset, cacheAsset !== undefined ? cacheAsset : cc.assetManager.cacheAsset);
                 }
                 subTask.recycle();
             }
-            
+
             var callbacks = repeatItem.callbacks;
 
             for (var i = 0, l = callbacks.length; i < l; i++) {

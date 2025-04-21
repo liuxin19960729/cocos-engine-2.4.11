@@ -48,7 +48,9 @@ var cacheManager = {
     version: '1.1',
 
     getCache(url) {
+        // 更新访问时间
         this.updateLastTime(url);
+        // path gamecaches/...
         return this.cachedFiles.has(url) ? `${this.cacheDir}/${this.cachedFiles.get(url).url}` : '';
     },
 
@@ -89,8 +91,10 @@ var cacheManager = {
     _write() {
         writeCacheFileList = null;
         startWrite = true;
+        // 讲缓存文件相关的信息 放入 json 序列化成字符串写入到磁盘
         writeFile(this.cacheDir + '/' + this.cachedFileName, JSON.stringify({ files: this.cachedFiles._map, version: this.version }), 'utf8', function () {
             startWrite = false;
+            // 执行挂载的会掉函数
             for (let i = 0, j = callbacks.length; i < j; i++) {
                 callbacks[i]();
             }
@@ -124,6 +128,7 @@ var cacheManager = {
      * @param {*} cacheBundleRoot bundle 
      */
     cacheFile(id, url, cacheBundleRoot) {
+        /**url  缓存的位置*/
         this.cachedFiles.add(id, { bundle: cacheBundleRoot, url, lastTime: Date.now() });
         this.writeCacheFile();
     },

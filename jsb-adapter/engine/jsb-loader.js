@@ -93,6 +93,8 @@ function download(url, func, options, onFileProgress, onComplete) {
         else {
             storagePath = `${time}${suffix++}${cc.path.extname(url)}`;
         }
+
+        /**将文件下载到 gamecaches/${storagePath} */
         downloadFile(url, `${cacheManager.cacheDir}/${storagePath}`, options.header, onFileProgress, function (err, path) {
             if (err) {
                 //failureRecord 失败记录
@@ -112,6 +114,7 @@ function download(url, func, options, onFileProgress, onComplete) {
             delete failureMap[url];
             func(path, options, function (err, data) {
                 if (!err) {
+                    /**将下载到的文件写入缓存列表里面 */
                     cacheManager.cacheFile(url, storagePath, options.__cacheBundleRoot__);
                 }
                 onComplete(err, data);

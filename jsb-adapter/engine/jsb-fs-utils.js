@@ -31,7 +31,7 @@ var fsUtils = {
 
     fs,
 
-    initJsbDownloader (jsbDownloaderMaxTasks, jsbDownloaderTimeout) {
+    initJsbDownloader(jsbDownloaderMaxTasks, jsbDownloaderTimeout) {
         /**初始化jsb下载器 */
         jsb_downloader = new jsb.Downloader({
             countOfMaxProcessingTasks: jsbDownloaderMaxTasks || 32,
@@ -41,34 +41,34 @@ var fsUtils = {
 
         tempDir = fsUtils.getUserDataPath() + '/temp';
         !fs.isDirectoryExist(tempDir) && fs.createDirectory(tempDir);
-        
+        /**下载文件成功 */
         jsb_downloader.setOnFileTaskSuccess(task => {
             if (!downloading.has(task.requestURL)) return;
             let { onComplete } = downloading.remove(task.requestURL);
-        
+
             onComplete && onComplete(null, task.storagePath);
         });
-        
+        /**下载文件失败错误 */
         jsb_downloader.setOnTaskError((task, errorCode, errorCodeInternal, errorStr) => {
             if (!downloading.has(task.requestURL)) return;
             let { onComplete } = downloading.remove(task.requestURL);
             cc.error(`Download file failed: path: ${task.requestURL} message: ${errorStr}, ${errorCode}`);
             onComplete(new Error(errorStr), null);
         });
-        
+        /**下载文件进度 */
         jsb_downloader.setOnTaskProgress((task, bytesReceived, totalBytesReceived, totalBytesExpected) => {
             if (!downloading.has(task.requestURL)) return;
             let { onProgress } = downloading.get(task.requestURL);
-        
+
             onProgress && onProgress(totalBytesReceived, totalBytesExpected);
         });
     },
 
-    getUserDataPath () {
+    getUserDataPath() {
         return fs.getWritablePath().replace(/[\/\\]*$/, '');
     },
 
-    checkFsValid () {
+    checkFsValid() {
         if (!fs) {
             cc.warn('can not get the file system!');
             return false;
@@ -76,7 +76,7 @@ var fsUtils = {
         return true;
     },
 
-    deleteFile (filePath, onComplete) {
+    deleteFile(filePath, onComplete) {
         var result = fs.removeFile(filePath);
         if (result === true) {
             onComplete && onComplete(null);
@@ -87,7 +87,7 @@ var fsUtils = {
         }
     },
 
-    downloadFile (remoteUrl, filePath, header, onProgress, onComplete) {
+    downloadFile(remoteUrl, filePath, header, onProgress, onComplete) {
         downloading.add(remoteUrl, { onProgress, onComplete });
         var storagePath = filePath;
         if (!storagePath) storagePath = tempDir + '/' + performance.now() + cc.path.extname(remoteUrl);
@@ -95,7 +95,7 @@ var fsUtils = {
         jsb_downloader.createDownloadFileTask(remoteUrl, storagePath, header);
     },
 
-    saveFile (srcPath, destPath, onComplete) {
+    saveFile(srcPath, destPath, onComplete) {
         var err = null;
         let result = fs.writeDataToFile(fs.getDataFromFile(srcPath), destPath);
         fs.removeFile(srcPath);
@@ -106,7 +106,7 @@ var fsUtils = {
         onComplete && onComplete(err);
     },
 
-    copyFile (srcPath, destPath, onComplete) {
+    copyFile(srcPath, destPath, onComplete) {
         var err = null;
         let result = fs.writeDataToFile(fs.getDataFromFile(srcPath), destPath);
         if (!result) {
@@ -116,7 +116,7 @@ var fsUtils = {
         onComplete && onComplete(err);
     },
 
-    writeFile (path, data, encoding, onComplete) {
+    writeFile(path, data, encoding, onComplete) {
         var result = null;
         var err = null;
         if (encoding === 'utf-8' || encoding === 'utf8') {
@@ -132,7 +132,7 @@ var fsUtils = {
         onComplete && onComplete(err);
     },
 
-    writeFileSync (path, data, encoding) {
+    writeFileSync(path, data, encoding) {
         var result = null;
         if (encoding === 'utf-8' || encoding === 'utf8') {
             result = fs.writeStringToFile(data, path);
@@ -147,7 +147,7 @@ var fsUtils = {
         }
     },
 
-    readFile (filePath, encoding, onComplete) {
+    readFile(filePath, encoding, onComplete) {
         var content = null, err = null;
         if (encoding === 'utf-8' || encoding === 'utf8') {
             content = fs.getStringFromFile(filePath);
@@ -159,11 +159,11 @@ var fsUtils = {
             err = new Error(`Read file failed: path: ${filePath}`);
             cc.warn(err.message);
         }
-        
-        onComplete && onComplete (err, content);
+
+        onComplete && onComplete(err, content);
     },
 
-    readDir (filePath, onComplete) {
+    readDir(filePath, onComplete) {
         var files = null, err = null;
         try {
             files = fs.listFiles(filePath);
@@ -175,15 +175,15 @@ var fsUtils = {
         onComplete && onComplete(err, files);
     },
 
-    readText (filePath, onComplete) {
+    readText(filePath, onComplete) {
         fsUtils.readFile(filePath, 'utf8', onComplete);
     },
 
-    readArrayBuffer (filePath, onComplete) {
+    readArrayBuffer(filePath, onComplete) {
         fsUtils.readFile(filePath, '', onComplete);
     },
 
-    readJson (filePath, onComplete) {
+    readJson(filePath, onComplete) {
         fsUtils.readFile(filePath, 'utf8', function (err, text) {
             var out = null;
             if (!err) {
@@ -199,7 +199,7 @@ var fsUtils = {
         });
     },
 
-    readJsonSync (path) {
+    readJsonSync(path) {
         try {
             var str = fs.getStringFromFile(path);
             return JSON.parse(str);
@@ -210,7 +210,7 @@ var fsUtils = {
         }
     },
 
-    makeDirSync (path, recursive) {
+    makeDirSync(path, recursive) {
         let result = fs.createDirectory(path);
         if (!result) {
             cc.warn(`Make directory failed: path: ${path}`);
@@ -218,7 +218,7 @@ var fsUtils = {
         }
     },
 
-    rmdirSync (dirPath, recursive) {
+    rmdirSync(dirPath, recursive) {
         let result = fs.removeDirectory(dirPath);
         if (!result) {
             cc.warn(`rm directory failed: path: ${dirPath}`);
@@ -226,12 +226,12 @@ var fsUtils = {
         }
     },
 
-    exists (filePath, onComplete) {
+    exists(filePath, onComplete) {
         var result = fs.isFileExist(filePath);
         onComplete && onComplete(result);
     },
 
-    loadSubpackage (name, onProgress, onComplete) {
+    loadSubpackage(name, onProgress, onComplete) {
         throw new Error('not implement');
     }
 };
