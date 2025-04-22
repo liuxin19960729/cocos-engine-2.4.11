@@ -67,9 +67,11 @@ function downloadScript(url, options, onComplete) {
 
 function download(url, func, options, onFileProgress, onComplete) {
     var result = transformUrl(url, options);
+    // 资源在本地
     if (result.inLocal) {
         func(result.url, options, onComplete);
     }
+    // 资源在缓存
     else if (result.inCache) {
         // 缓存
         cacheManager.updateLastTime(url)
@@ -81,6 +83,7 @@ function download(url, func, options, onFileProgress, onComplete) {
         });
     }
     else {
+        // 下载资源
         var time = Date.now();
         var storagePath = '';
         var failureRecord = failureMap[url];
@@ -126,13 +129,15 @@ function download(url, func, options, onFileProgress, onComplete) {
 function transformUrl(url, options) {
     // local
     var inLocal = false;
-    // 缓存中
+    // cahce
     var inCache = false;
     if (REGEX.test(url)) {
+        // http or https ... 下载
         if (options.reload) {
             return { url };
         }
         else {
+            // 在缓存中
             var cache = cacheManager.getCache(url);
             if (cache) {
                 inCache = true;
@@ -141,6 +146,7 @@ function transformUrl(url, options) {
         }
     }
     else {
+        // 在本地
         inLocal = true;
     }
     return { url, inLocal, inCache };
@@ -263,7 +269,7 @@ parser.parsePVRTex = downloader.downloadDomImage;
 parser.parsePKMTex = downloader.downloadDomImage;
 parser.parseASTCTex = downloader.downloadDomImage;
 downloader.downloadScript = downloadScript;
-
+/**注册下载相关的函数 */
 downloader.register({
     // JS
     '.js': downloadScript,
