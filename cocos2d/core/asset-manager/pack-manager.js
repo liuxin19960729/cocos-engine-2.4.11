@@ -206,7 +206,7 @@ var packManager = {
      * 
      */
     load (item, options, onComplete) {
-        // if not in any package, download as uausl
+        // if not in any package, download as uausl 没有在任何包中请照常下载
         if (item.isNative || !item.info || !item.info.packs) return downloader.download(item.id, item.url, item.ext, item.options, onComplete);
 
         if (files.has(item.id)) return onComplete(null, files.get(item.id));
