@@ -36,6 +36,7 @@ var utils = {
         var uuids = options.uuids;
         var paths = options.paths;
         var types = options.types;
+        // 当前Bundle 依赖的bunldle
         var bundles = options.deps;
         var realEntries = options.paths = Object.create(null);
 
@@ -63,7 +64,7 @@ var utils = {
             let entry = paths[id];
             realEntries[uuids[id]] = entry;
         }
-
+        // bundle 包里面包含的场景
         var scenes = options.scenes;
         for (let name in scenes) {
             let uuid = scenes[name];

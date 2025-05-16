@@ -169,13 +169,14 @@ var handleQueue = function (maxConcurrency, maxRequestsPerFrame) {
      * _queue.length > 0 请求队列有请求
      */
     while (_queue.length > 0 && _totalNum < maxConcurrency && _totalNumThisPeriod < maxRequestsPerFrame) {
-        // 队列是否需要排序
+        // 队列是否需要排序(升序排列)
         if (_queueDirty) {
             _queue.sort(function (a, b) {
                 return a.priority - b.priority;
             });
             _queueDirty = false;
         }
+        // 取出当前优先级最高的请求
         var nextOne = _queue.pop();
         if (!nextOne) {
             break;
@@ -473,7 +474,9 @@ var downloader = {
             downloadCallbacks.push(onComplete);
             for (let i = 0, l = _queue.length; i < l; i++) {
                 var item = _queue[i];
+                // 如果还没有开始请求
                 if (item.id === id) {
+                    // 提升优先级
                     var priority = options.priority || 0;
                     if (item.priority < priority) {
                         item.priority = priority;
@@ -490,6 +493,7 @@ var downloader = {
             var maxRequestsPerFrame = typeof options.maxRequestsPerFrame !== 'undefined' ? options.maxRequestsPerFrame : this.maxRequestsPerFrame;
 
             function process(index, callback) {
+                // index 重试次数
                 if (index === 0) {
                     _downloading.add(id, [onComplete]);
                 }

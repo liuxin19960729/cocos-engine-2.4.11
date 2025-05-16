@@ -58,8 +58,8 @@ Config.prototype = {
         this.base = options.base || '';
         this.name = options.name || '';
         this.deps = options.deps || [];
-        // init
         this._initUuid(options.uuids);
+        /** uuid type path */
         this._initPath(options.paths);
         this._initScene(options.scenes);
         this._initPackage(options.packs);
