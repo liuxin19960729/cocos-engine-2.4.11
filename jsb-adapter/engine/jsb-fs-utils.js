@@ -41,14 +41,14 @@ var fsUtils = {
 
         tempDir = fsUtils.getUserDataPath() + '/temp';
         !fs.isDirectoryExist(tempDir) && fs.createDirectory(tempDir);
-        /**下载文件成功 */
+
         jsb_downloader.setOnFileTaskSuccess(task => {
             if (!downloading.has(task.requestURL)) return;
             let { onComplete } = downloading.remove(task.requestURL);
 
             onComplete && onComplete(null, task.storagePath);
         });
-        /**下载文件失败错误 */
+
         jsb_downloader.setOnTaskError((task, errorCode, errorCodeInternal, errorStr) => {
             if (!downloading.has(task.requestURL)) return;
             let { onComplete } = downloading.remove(task.requestURL);
@@ -86,7 +86,8 @@ var fsUtils = {
             onComplete && onComplete(new Error('delete file failed'));
         }
     },
-
+    
+    /**下载并存储文件 */
     downloadFile(remoteUrl, filePath, header, onProgress, onComplete) {
         downloading.add(remoteUrl, { onProgress, onComplete });
         var storagePath = filePath;
