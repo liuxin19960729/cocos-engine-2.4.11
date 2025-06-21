@@ -200,7 +200,7 @@ var _Deserializer = (function () {
         return this.deserializedData;
     };
 
-    ///**
+    ///** 反序列化对象
     // * @param {Object} serialized - The obj to deserialize, must be non-nil
     // * @param {Object} [owner] - debug only
     // * @param {String} [propName] - debug only
@@ -209,6 +209,7 @@ var _Deserializer = (function () {
         var prop;
         var obj = null;     // the obj to return
         var klass = null;
+        // 类型  "sp.SkeletonData" "ccEffectAssest"
         var type = serialized.__type__;
         if (type === 'TypedArray') {
             var array = serialized.array;
@@ -219,10 +220,11 @@ var _Deserializer = (function () {
             return obj;
         }
         else if (type) {
-
+            // 玩家自定义对象 or Cocos 对象
             // Type Object (including CCClass)
             /**
              * _classFinder 一般情况下 js._getClassById(id) 来寻找 prefeb 里面包含相关的cc.Component
+             * 找到Class 对象
              */
             klass = this._classFinder(type, serialized, owner, propName);
             if (!klass) {
@@ -239,8 +241,10 @@ var _Deserializer = (function () {
             if (obj._deserialize) {
                 obj._deserialize(serialized.content, this);
                 return obj;
-            }
+            }   
+            // Cocos 相关的Class
             if (cc.Class._isCCClass(klass)) {
+                // 将 serialized 数据装配到 obj 
                 _deserializeFireClass(this, obj, serialized, klass);
             }
             else {

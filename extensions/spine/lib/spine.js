@@ -1503,6 +1503,7 @@ var spine;
             }
             var events = mix < from.eventThreshold ? this.events : null;
             var attachments = mix < from.attachmentThreshold, drawOrder = mix < from.drawOrderThreshold;
+            // animationTime 动画播放的时间
             var animationLast = from.animationLast, animationTime = from.getAnimationTime();
             var timelineCount = from.animation.timelines.length;
             var timelines = from.animation.timelines;
@@ -1649,6 +1650,7 @@ var spine;
             var animationStart = entry.animationStart, animationEnd = entry.animationEnd;
             var duration = animationEnd - animationStart;
             var trackLastWrapped = entry.trackLast % duration;
+            // 当前要发送到事件
             var events = this.events;
             var i = 0, n = events.length;
             for (; i < n; i++) {
@@ -1667,7 +1669,7 @@ var spine;
             if (complete)
                 this.queue.complete(entry);
             for (; i < n; i++) {
-                var event_2 = events[i];
+                var event_2 = events[i];get
                 if (event_2.time < animationStart)
                     continue;
                 this.queue.event(entry, events[i]);
@@ -4055,6 +4057,7 @@ var spine;
             offset.set(minX, minY);
             size.set(maxX - minX, maxY - minY);
         };
+        // this.time 当前Spine 运行的总时间
         Skeleton.prototype.update = function (delta) {
             this.time += delta;
         };

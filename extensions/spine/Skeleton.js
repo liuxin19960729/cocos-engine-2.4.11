@@ -659,7 +659,7 @@ sp.Skeleton = cc.Class({
     update (dt) {
         if (CC_EDITOR) return;
         if (this.paused) return;
-
+        // spine 动画通用设置速率
         dt *= this.timeScale * sp.timeScale;
 
         if (this.isAnimationCached()) {
@@ -739,12 +739,17 @@ sp.Skeleton = cc.Class({
         this._curFrame = frames[frameIdx];
     },
 
+    // no cache
     _updateRealtime (dt) {
         let skeleton = this._skeleton;
         let state = this._state;
         if (skeleton) {
             skeleton.update(dt);
             if (state) {
+                /**
+                 * 处理内部队列事件 apply 方法返回前会通知帧听器
+                 * 
+                 */
                 state.update(dt);
                 state.apply(skeleton);
             }

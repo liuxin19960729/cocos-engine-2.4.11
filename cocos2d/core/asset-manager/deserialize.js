@@ -91,6 +91,7 @@ function deserialize (json, options) {
         };
     }
 
+    // 序列化的资源依赖的都资源
     // non-native deps
     asset.__depends__ = depends;
     // native dep

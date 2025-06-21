@@ -234,10 +234,13 @@ let SkeletonData = cc.Class({
 
         let resData = null;
         let reader = null;
+
         if (this.skeletonJson) {
+            // json
             reader = new sp.spine.SkeletonJson(attachmentLoader);
             resData = this.skeletonJson;
         } else {
+            // binary
             reader = new sp.spine.SkeletonBinary(attachmentLoader);
             resData = new Uint8Array(this._nativeAsset);
         }
