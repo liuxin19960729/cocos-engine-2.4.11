@@ -42,7 +42,7 @@ function Config () {
     this.assetInfos = new Cache();
 
     this.scenes = new Cache();
-
+    /**path 路劲下对应的有那些资源 */
     this.paths = new Cache();
 }
 
@@ -87,8 +87,8 @@ Config.prototype = {
             var isSubAsset = info.length === 3;
 
             var assetInfo = this.assetInfos.get(uuid);
-            assetInfo.path = path;
-            assetInfo.ctor = js._getClassById(type);
+            assetInfo.path = path;// 资源路径
+            assetInfo.ctor = js._getClassById(type);// 资源type 对应的 Class
             if (paths.has(path)) {
                 if (isSubAsset) {
                     paths.get(path).push(assetInfo);

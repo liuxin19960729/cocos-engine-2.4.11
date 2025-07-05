@@ -34,12 +34,13 @@ var utils = {
     processOptions (options) {
         if (CC_EDITOR) return;
         var uuids = options.uuids;
+        /**{[uuid]:[path,type]} */
         var paths = options.paths;
         var types = options.types;
         // 当前Bundle 依赖的bunldle
         var bundles = options.deps;
         var realEntries = options.paths = Object.create(null);
-
+        // 解析uuids
         if (options.debug === false) {
             for (let i = 0, l = uuids.length; i < l; i++) {
                 uuids[i] = decodeUuid(uuids[i]);
@@ -64,7 +65,7 @@ var utils = {
             let entry = paths[id];
             realEntries[uuids[id]] = entry;
         }
-        // bundle 包里面包含的场景
+        // bundle 包里面包含的场景 key scene name value uuid
         var scenes = options.scenes;
         for (let name in scenes) {
             let uuid = scenes[name];
