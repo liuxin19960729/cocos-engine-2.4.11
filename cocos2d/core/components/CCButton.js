@@ -146,7 +146,7 @@ let Button = cc.Class({
     extends: Component,
     mixins: [GraySpriteState],
 
-    ctor () {
+    ctor() {
         this._pressed = false;
         this._hovered = false;
         this._fromColor = null;
@@ -184,7 +184,7 @@ let Button = cc.Class({
         interactable: {
             default: true,
             tooltip: CC_DEV && 'i18n:COMPONENT.button.interactable',
-            notify () {
+            notify() {
                 this._updateState();
 
                 if (!this.interactable) {
@@ -196,7 +196,7 @@ let Button = cc.Class({
 
         _resizeToTarget: {
             animatable: false,
-            set (value) {
+            set(value) {
                 if (value) {
                     this._resizeNodeToTargetNode();
                 }
@@ -211,7 +211,7 @@ let Button = cc.Class({
         enableAutoGrayEffect: {
             default: false,
             tooltip: CC_DEV && 'i18n:COMPONENT.button.auto_gray_effect',
-            notify () {
+            notify() {
                 this._updateDisabledState(true);
             }
         },
@@ -227,7 +227,7 @@ let Button = cc.Class({
             tooltip: CC_DEV && 'i18n:COMPONENT.button.transition',
             type: Transition,
             animatable: false,
-            notify (oldValue) {
+            notify(oldValue) {
                 this._updateTransition(oldValue);
             },
             formerlySerializedAs: 'transition'
@@ -244,7 +244,7 @@ let Button = cc.Class({
             default: cc.Color.WHITE,
             displayName: 'Normal',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.normal_color',
-            notify () {
+            notify() {
                 if (this.transition === Transition.Color && this._getButtonState() === State.NORMAL) {
                     this._getTarget().opacity = this.normalColor.a;
                 }
@@ -261,7 +261,7 @@ let Button = cc.Class({
             default: cc.color(211, 211, 211),
             displayName: 'Pressed',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.pressed_color',
-            notify () {
+            notify() {
                 if (this.transition === Transition.Color && this._getButtonState() === State.PRESSED) {
                     this._getTarget().opacity = this.pressedColor.a;
                 }
@@ -279,7 +279,7 @@ let Button = cc.Class({
             default: cc.Color.WHITE,
             displayName: 'Hover',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.hover_color',
-            notify () {
+            notify() {
                 if (this.transition === Transition.Color && this._getButtonState() === State.HOVER) {
                     this._getTarget().opacity = this.hoverColor.a;
                 }
@@ -297,7 +297,7 @@ let Button = cc.Class({
             default: cc.color(124, 124, 124),
             displayName: 'Disabled',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.disabled_color',
-            notify () {
+            notify() {
                 if (this.transition === Transition.Color && this._getButtonState() === State.DISABLED) {
                     this._getTarget().opacity = this.disabledColor.a;
                 }
@@ -338,7 +338,7 @@ let Button = cc.Class({
             type: cc.SpriteFrame,
             displayName: 'Normal',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.normal_sprite',
-            notify () {
+            notify() {
                 this._updateState();
             }
         },
@@ -354,7 +354,7 @@ let Button = cc.Class({
             displayName: 'Pressed',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.pressed_sprite',
             formerlySerializedAs: 'pressedSprite',
-            notify () {
+            notify() {
                 this._updateState();
             }
         },
@@ -370,7 +370,7 @@ let Button = cc.Class({
             displayName: 'Hover',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.hover_sprite',
             formerlySerializedAs: 'hoverSprite',
-            notify () {
+            notify() {
                 this._updateState();
             }
         },
@@ -385,7 +385,7 @@ let Button = cc.Class({
             type: cc.SpriteFrame,
             displayName: 'Disabled',
             tooltip: CC_DEV && 'i18n:COMPONENT.button.disabled_sprite',
-            notify () {
+            notify() {
                 this._updateState();
             }
         },
@@ -409,7 +409,7 @@ let Button = cc.Class({
             default: null,
             type: cc.Node,
             tooltip: CC_DEV && "i18n:COMPONENT.button.target",
-            notify (oldValue) {
+            notify(oldValue) {
                 this._applyTarget();
                 if (oldValue && this.target !== oldValue) {
                     this._unregisterTargetEvent(oldValue);
@@ -433,12 +433,12 @@ let Button = cc.Class({
         Transition: Transition,
     },
 
-    __preload () {
+    __preload() {
         this._applyTarget();
         this._resetState();
     },
 
-    _resetState () {
+    _resetState() {
         this._pressed = false;
         this._hovered = false;
         // // Restore button status
@@ -455,7 +455,7 @@ let Button = cc.Class({
         this._transitionFinished = true;
     },
 
-    onEnable () {
+    onEnable() {
         // check sprite frames
         if (this.normalSprite) {
             this.normalSprite.ensureLoadTexture();
@@ -469,7 +469,7 @@ let Button = cc.Class({
         if (this.disabledSprite) {
             this.disabledSprite.ensureLoadTexture();
         }
-        
+
         if (!CC_EDITOR) {
             this._registerNodeEvent();
         }
@@ -477,7 +477,7 @@ let Button = cc.Class({
         this._updateState();
     },
 
-    onDisable () {
+    onDisable() {
         this._resetState();
 
         if (!CC_EDITOR) {
@@ -485,23 +485,23 @@ let Button = cc.Class({
         }
     },
 
-    _getTarget () {
+    _getTarget() {
         return this.target ? this.target : this.node;
     },
 
-    _onTargetSpriteFrameChanged (comp) {
+    _onTargetSpriteFrameChanged(comp) {
         if (this.transition === Transition.SPRITE) {
             this._setCurrentStateSprite(comp.spriteFrame);
         }
     },
 
-    _onTargetColorChanged (color) {
+    _onTargetColorChanged(color) {
         if (this.transition === Transition.COLOR) {
             this._setCurrentStateColor(color);
         }
     },
 
-    _onTargetScaleChanged () {
+    _onTargetScaleChanged() {
         let target = this._getTarget();
         // update _originalScale if target scale changed
         if (this._originalScale) {
@@ -512,7 +512,7 @@ let Button = cc.Class({
         }
     },
 
-    _setTargetColor (color) {
+    _setTargetColor(color) {
         let target = this._getTarget();
         let cloneColor = color.clone();
         target.opacity = cloneColor.a;
@@ -520,7 +520,7 @@ let Button = cc.Class({
         target.color = cloneColor;
     },
 
-    _getStateColor (state) {
+    _getStateColor(state) {
         switch (state) {
             case State.NORMAL:
                 return this.normalColor;
@@ -533,7 +533,7 @@ let Button = cc.Class({
         }
     },
 
-    _getStateSprite (state) {
+    _getStateSprite(state) {
         switch (state) {
             case State.NORMAL:
                 return this.normalSprite;
@@ -546,8 +546,8 @@ let Button = cc.Class({
         }
     },
 
-    _setCurrentStateColor (color) {
-        switch ( this._getButtonState() ) {
+    _setCurrentStateColor(color) {
+        switch (this._getButtonState()) {
             case State.NORMAL:
                 this.normalColor = color;
                 break;
@@ -563,8 +563,8 @@ let Button = cc.Class({
         }
     },
 
-    _setCurrentStateSprite (spriteFrame) {
-        switch ( this._getButtonState() ) {
+    _setCurrentStateSprite(spriteFrame) {
+        switch (this._getButtonState()) {
             case State.NORMAL:
                 this.normalSprite = spriteFrame;
                 break;
@@ -580,7 +580,7 @@ let Button = cc.Class({
         }
     },
 
-    update (dt) {
+    update(dt) {
         let target = this._getTarget();
         if (this._transitionFinished) return;
         if (this.transition !== Transition.COLOR && this.transition !== Transition.SCALE) return;
@@ -611,7 +611,7 @@ let Button = cc.Class({
 
     },
 
-    _registerNodeEvent () {
+    _registerNodeEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this._onTouchBegan, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this._onTouchEnded, this);
@@ -621,7 +621,7 @@ let Button = cc.Class({
         this.node.on(cc.Node.EventType.MOUSE_LEAVE, this._onMouseMoveOut, this);
     },
 
-    _unregisterNodeEvent () {
+    _unregisterNodeEvent() {
         this.node.off(cc.Node.EventType.TOUCH_START, this._onTouchBegan, this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
         this.node.off(cc.Node.EventType.TOUCH_END, this._onTouchEnded, this);
@@ -631,7 +631,7 @@ let Button = cc.Class({
         this.node.off(cc.Node.EventType.MOUSE_LEAVE, this._onMouseMoveOut, this);
     },
 
-    _registerTargetEvent (target) {
+    _registerTargetEvent(target) {
         if (CC_EDITOR) {
             target.on('spriteframe-changed', this._onTargetSpriteFrameChanged, this);
             target.on(cc.Node.EventType.COLOR_CHANGED, this._onTargetColorChanged, this);
@@ -639,7 +639,7 @@ let Button = cc.Class({
         target.on(cc.Node.EventType.SCALE_CHANGED, this._onTargetScaleChanged, this);
     },
 
-    _unregisterTargetEvent (target) {
+    _unregisterTargetEvent(target) {
         if (CC_EDITOR) {
             target.off('spriteframe-changed', this._onTargetSpriteFrameChanged, this);
             target.off(cc.Node.EventType.COLOR_CHANGED, this._onTargetColorChanged, this);
@@ -647,7 +647,7 @@ let Button = cc.Class({
         target.off(cc.Node.EventType.SCALE_CHANGED, this._onTargetScaleChanged, this);
     },
 
-    _getTargetSprite (target) {
+    _getTargetSprite(target) {
         let sprite = null;
         if (target) {
             sprite = target.getComponent(cc.Sprite);
@@ -655,7 +655,7 @@ let Button = cc.Class({
         return sprite;
     },
 
-    _applyTarget () {
+    _applyTarget() {
         let target = this._getTarget();
         this._sprite = this._getTargetSprite(target);
         if (!this._originalScale) {
@@ -668,7 +668,7 @@ let Button = cc.Class({
     },
 
     // touch event handler
-    _onTouchBegan (event) {
+    _onTouchBegan(event) {
         if (!this.interactable || !this.enabledInHierarchy) return;
 
         this._pressed = true;
@@ -676,7 +676,7 @@ let Button = cc.Class({
         event.stopPropagation();
     },
 
-    _onTouchMove (event) {
+    _onTouchMove(event) {
         if (!this.interactable || !this.enabledInHierarchy || !this._pressed) return;
         // mobile phone will not emit _onMouseMoveOut,
         // so we have to do hit test when touch moving
@@ -709,7 +709,7 @@ let Button = cc.Class({
         event.stopPropagation();
     },
 
-    _onTouchEnded (event) {
+    _onTouchEnded(event) {
         if (!this.interactable || !this.enabledInHierarchy) return;
 
         if (this._pressed) {
@@ -721,14 +721,14 @@ let Button = cc.Class({
         event.stopPropagation();
     },
 
-    _onTouchCancel () {
+    _onTouchCancel() {
         if (!this.interactable || !this.enabledInHierarchy) return;
 
         this._pressed = false;
         this._updateState();
     },
 
-    _onMouseMoveIn () {
+    _onMouseMoveIn() {
         if (this._pressed || !this.interactable || !this.enabledInHierarchy) return;
         if (this.transition === Transition.SPRITE && !this.hoverSprite) return;
 
@@ -738,7 +738,7 @@ let Button = cc.Class({
         }
     },
 
-    _onMouseMoveOut () {
+    _onMouseMoveOut() {
         if (this._hovered) {
             this._hovered = false;
             this._updateState();
@@ -746,13 +746,13 @@ let Button = cc.Class({
     },
 
     // state handler
-    _updateState () {
+    _updateState() {
         let state = this._getButtonState();
         this._applyTransition(state);
         this._updateDisabledState();
     },
 
-    _getButtonState () {
+    _getButtonState() {
         let state;
         if (!this.interactable) {
             state = State.DISABLED;
@@ -769,14 +769,14 @@ let Button = cc.Class({
         return state;
     },
 
-    _updateColorTransitionImmediately (state) {
+    _updateColorTransitionImmediately(state) {
         let color = this._getStateColor(state);
         this._setTargetColor(color);
         this._fromColor = color.clone();
         this._toColor = color;
     },
 
-    _updateColorTransition (state) {
+    _updateColorTransition(state) {
         if (CC_EDITOR || state === State.DISABLED) {
             this._updateColorTransitionImmediately(state);
         } else {
@@ -789,14 +789,14 @@ let Button = cc.Class({
         }
     },
 
-    _updateSpriteTransition (state) {
+    _updateSpriteTransition(state) {
         let sprite = this._getStateSprite(state);
         if (this._sprite && sprite) {
             this._sprite.spriteFrame = sprite;
         }
     },
 
-    _updateScaleTransition (state) {
+    _updateScaleTransition(state) {
         if (state === State.PRESSED) {
             this._zoomUp();
         } else {
@@ -804,7 +804,7 @@ let Button = cc.Class({
         }
     },
 
-    _zoomUp () {
+    _zoomUp() {
         // skip before __preload()
         if (!this._originalScale) {
             return;
@@ -818,7 +818,7 @@ let Button = cc.Class({
         this._transitionFinished = false;
     },
 
-    _zoomBack () {
+    _zoomBack() {
         // skip before __preload()
         if (!this._originalScale) {
             return;
@@ -833,7 +833,7 @@ let Button = cc.Class({
         this._transitionFinished = false;
     },
 
-    _updateTransition (oldTransition) {
+    _updateTransition(oldTransition) {
         // Reset to normal data when change transition.
         if (oldTransition === Transition.COLOR) {
             this._updateColorTransitionImmediately(State.NORMAL);
@@ -844,7 +844,7 @@ let Button = cc.Class({
         this._updateState();
     },
 
-    _applyTransition (state) {
+    _applyTransition(state) {
         let transition = this.transition;
         if (transition === Transition.COLOR) {
             this._updateColorTransition(state);
@@ -859,7 +859,7 @@ let Button = cc.Class({
         this.node.setContentSize(this._getTarget().getContentSize());
     },
 
-    _updateDisabledState (force) {
+    _updateDisabledState(force) {
         if (!this._sprite) return;
 
         if (this.enableAutoGrayEffect || force) {
