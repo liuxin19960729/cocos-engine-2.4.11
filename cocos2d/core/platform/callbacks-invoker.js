@@ -51,7 +51,7 @@ let callbackInfoPool = new js.Pool(function (info) {
 callbackInfoPool.get = function () {
     return this._get() || new CallbackInfo();
 };
-
+/**回调列表 isInvoking 是否正在执行 emit containCanceled是否整个列表退出 */
 function CallbackList () {
     this.callbackInfos = [];
     this.isInvoking = false;
@@ -122,7 +122,7 @@ proto.cancelAll = function () {
     this.containCanceled = true;
 };
 
-// filter all removed callbacks and compact array
+// filter all removed callbacks and compact array 清洗数据 将Infos 里面 null 删除掉
 proto.purgeCanceled = function () {
     for (let i = this.callbackInfos.length - 1; i >= 0; --i) {
         const info = this.callbackInfos[i];
@@ -203,6 +203,7 @@ proto.hasEventListener = function (key, callback, target) {
         return false;
     }
 
+    // 只检查是否存在 key
     // check any valid callback
     const infos = list.callbackInfos;
     if (!callback) {
@@ -220,6 +221,7 @@ proto.hasEventListener = function (key, callback, target) {
         }
     }
 
+    // key callback target 三个条件检查
     for (let i = 0; i < infos.length; ++i) {
         const info = infos[i];
         if (info && info.callback === callback && info.target === target) {
@@ -243,10 +245,10 @@ proto.removeAll = function (keyOrTarget) {
         // remove by key
         const list = this._callbackTable[keyOrTarget];
         if (list) {
-            if (list.isInvoking) {
-                list.cancelAll();
+            if (list.isInvoking) {// isInvoking 当前正在调用 
+                list.cancelAll();// 注销 并且将 info 放回到Pool 里面
             }
-            else {
+            else {// 直接移除
                 list.clear();
                 callbackListPool.put(list);
                 delete this._callbackTable[keyOrTarget];
@@ -333,7 +335,7 @@ proto.emit = function (key, arg1, arg2, arg3, arg4, arg5) {
             if (info) {
                 let target = info.target;
                 let callback = info.callback;
-                if (info.once) {
+                if (info.once) {// off 在触发
                     this.off(key, callback, target);
                 }
 
