@@ -20,6 +20,7 @@ class HTMLImageElement extends HTMLElement {
 
     set src(src) {
         this._src = src;
+        // jsb 加载图片
         jsb.loadImage(src, (info) => {
             if (!info) {
                 this._data = null;
