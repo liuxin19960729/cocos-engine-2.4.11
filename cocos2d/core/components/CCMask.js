@@ -128,6 +128,7 @@ let Mask = cc.Class({
                 }
 
                 this._type = value;
+                // RECT or  ELLIPSE
                 if (this._type !== MaskType.IMAGE_STENCIL) {
                     this.spriteFrame = null;
                     this.alphaThreshold = 0;
@@ -335,9 +336,10 @@ let Mask = cc.Class({
             material = MaterialVariant.create(material, this);
         }
 
+        // 通过 alpha < alphaThreshold discard  IMAGE_STENCIL 模式
         material.define('USE_ALPHA_TEST', true);
 
-        // Reset material
+        // Reset material 针对图片特殊处理
         if (this._type === MaskType.IMAGE_STENCIL) {
             material.define('CC_USE_MODEL', false);
             material.define('USE_TEXTURE', true);
@@ -375,6 +377,7 @@ let Mask = cc.Class({
             let texture = this.spriteFrame.getTexture();
             material.setProperty('texture', texture);
         }
+        // 用户设置的阈值
         material.setProperty('alphaThreshold', this.alphaThreshold);
     },
 
@@ -425,6 +428,13 @@ let Mask = cc.Class({
         else {
             graphics.fill();
         }
+
+        /**
+         * graphics 并不是在屏幕上画出颜色 而是为了
+         * 
+         * 而是为了在 Stencil Buffer 阶段填充 Ref Value (通常是 1)
+         */
+
         this.setVertsDirty();
     },
 

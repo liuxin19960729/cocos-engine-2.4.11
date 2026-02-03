@@ -681,16 +681,24 @@ let SpriteFrame = cc.Class(/** @lends cc.SpriteFrame# */{
             uv[7] = b;
         }
         else {
+            /**
+             * 
+             * 
+             */
             let l = texw === 0 ? 0 : rect.x / texw;
             let r = texw === 0 ? 0 : (rect.x + rect.width) / texw;
             let b = texh === 0 ? 0 : (rect.y + rect.height) / texh;
             let t = texh === 0 ? 0 : rect.y / texh;
+            // 左下
             uv[0] = l;
             uv[1] = b;
+            // 右下
             uv[2] = r;
             uv[3] = b;
+            // 左上
             uv[4] = l;
             uv[5] = t;
+            // 右上
             uv[6] = r;
             uv[7] = t;
         }
