@@ -20,7 +20,7 @@ export default class Assembler {
     }
 }
 
-
+// 注册
 Assembler.register = function (renderCompCtor, assembler) {
     renderCompCtor.__assembler__ = assembler;
 };
@@ -28,6 +28,7 @@ Assembler.register = function (renderCompCtor, assembler) {
 Assembler.init = function (renderComp) {
     let renderCompCtor = renderComp.constructor;
     let assemblerCtor =  renderCompCtor.__assembler__;
+    // 如果渲染类不存在 __assembler__ 使用父类 __assembler__
     while (!assemblerCtor) {
         renderCompCtor = renderCompCtor.$super;
         if (!renderCompCtor) {

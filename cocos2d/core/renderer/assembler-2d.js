@@ -42,6 +42,10 @@ export default class Assembler2D extends Assembler {
     }
 
     updateWorldVerts (comp) {
+        //vDatas 左下 → 右下 → 左上 → 右上
+        //vDatas [x,y,u,v,color] 0-4 5-9 ...
+
+
         let local = this._local;
         let verts = this._renderData.vDatas[0];
 

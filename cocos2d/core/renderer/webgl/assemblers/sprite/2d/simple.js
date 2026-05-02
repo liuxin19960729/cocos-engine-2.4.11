@@ -27,8 +27,9 @@ import Assembler2D from '../../../../assembler-2d';
 
 export default class SimpleSpriteAssembler extends Assembler2D {
     updateRenderData (sprite) {
+        // 动态和图
         this.packToDynamicAtlas(sprite, sprite._spriteFrame);
-
+        // 如果数据改变重新计算
         if (sprite._vertsDirty) {
             this.updateUVs(sprite);
             this.updateVerts(sprite);
@@ -48,7 +49,7 @@ export default class SimpleSpriteAssembler extends Assembler2D {
             verts[dstOffset + 1] = uv[srcOffset + 1];
         }
     }
-
+    // 更新顶点数据
     updateVerts (sprite) {
         let node = sprite.node,
             cw = node.width, ch = node.height,
